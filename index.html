@@ -1271,18 +1271,31 @@
       return year + '-' + mm + '-' + dd;
     }
 
-    function formatInputToSheetDate(inputDateStr) {
-      if (!inputDateStr) {
+    function sheetDateToInputFormat(sheetDateStr) {
+      if (!sheetDateStr) {
         return '';
       }
-      const parts = inputDateStr.split('-');
+      if (sheetDateStr.indexOf('GMT') !== -1) {
+        const d = new Date(sheetDateStr);
+        if (!isNaN(d.getTime())) {
+          const year = d.getFullYear();
+          const month = d.getMonth() + 1;
+          const day = d.getDate();
+          const mm = month < 10 ? '0' + month : String(month);
+          const dd = day < 10 ? '0' + day : String(day);
+          return year + '-' + mm + '-' + dd;
+        }
+      }
+      const parts = sheetDateStr.split('-');
       if (parts.length !== 3) {
         return '';
       }
-      const y = parts[0];
+      const d = parts[0];
       const m = parts[1];
-      const d = parts[2];
-      return d + '-' + m + '-' + y;
+      const y = parts[2];
+      const dd = d.length === 1 ? '0' + d : d;
+      const mm = m.length === 1 ? '0' + m : m;
+      return y + '-' + mm + '-' + dd;
     }
 
     function renderWriteoffListForDate(inputDateStr) {
@@ -1290,11 +1303,12 @@
         return;
       }
       writeoffListTableWrapper.innerHTML = '';
-      const targetDate = formatInputToSheetDate(inputDateStr);
+      const targetDate = inputDateStr;
       const list = [];
       for (let i = 0; i < writeOffs.length; i += 1) {
         const w = writeOffs[i];
-        if (w.date === targetDate) {
+        const converted = sheetDateToInputFormat(w.date);
+        if (converted === targetDate) {
           list.push(w);
         }
       }
