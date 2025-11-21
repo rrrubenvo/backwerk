@@ -140,11 +140,14 @@
     }
 
     function buildTableFromValues(values) {
+      const header = ['location', 'class', 'product', 'amount'];
       const rows = [];
+      rows.push(header);
+
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
           const idx = indexFromRowCol(r, c);
-          const srcRow = values && values[idx] ? values[idx] : [];
+          const srcRow = values && values[idx + 1] ? values[idx + 1] : [];
           const canonicalLoc = String.fromCharCode(baseCharCode + c - 1) + r;
 
           let loc = srcRow[0];
@@ -170,7 +173,7 @@
       const matrix = createEmptyMatrix(ROWS, COLS, 'grey');
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
-          const idx = indexFromRowCol(r, c);
+          const idx = indexFromRowCol(r, c) + 1;
           const row = rows[idx];
           const color = row && row[1] ? row[1] : 'grey';
           matrix[r - 1][c - 1] = COLOR_CLASSES.indexOf(color) === -1 ? 'grey' : color;
@@ -249,7 +252,7 @@
           const color = getCellColorClass(element);
           if (statusMatrix[rowIndex][colIndex] !== color) {
             statusMatrix[rowIndex][colIndex] = color;
-            const idx = indexFromRowCol(rowIndex + 1, colIndex + 1);
+            const idx = indexFromRowCol(rowIndex + 1, colIndex + 1) + 1;
             if (tableRows[idx]) {
               tableRows[idx][1] = color;
             }
