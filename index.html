@@ -96,4 +96,22 @@
     const cols = 6;
     const rows = 5;
     const grid = document.getElementById('grid');
-    const baseCharCo
+    const baseCharCode = 'A'.charCodeAt(0);
+
+    for (let r = 1; r <= rows; r += 1) {
+      for (let c = 1; c <= cols; c += 1) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell', `row-${r}`, `col-${c}`);
+
+        const colLetter = String.fromCharCode(baseCharCode + c - 1);
+        const location = document.createElement('div');
+        location.classList.add('location');
+        location.textContent = colLetter + r;
+
+        cell.appendChild(location);
+        grid.appendChild(cell);
+      }
+    }
+  </script>
+</body>
+</html>
