@@ -145,10 +145,10 @@
     }
 
     .cell-clear {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       cursor: pointer;
       user-select: none;
-      padding: 2px 4px;
+      padding: 3px 6px;
       border-radius: 4px;
     }
 
@@ -192,6 +192,15 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
+    }
+
+    .writeoff-panel {
+      max-width: 480px;
+      width: min(90%, 480px);
+    }
+
+    #writeoff-content {
+      text-align: center;
     }
 
     .popup-header {
@@ -272,11 +281,11 @@
     .product-ok {
       align-self: flex-end;
       margin-top: 4px;
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
       background: #000000;
       color: #ffffff;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       cursor: pointer;
       user-select: none;
       transition: background 120ms ease-out, transform 120ms ease-out;
@@ -325,7 +334,7 @@
   </div>
 
   <div id="writeoff-popup" class="popup">
-    <div class="popup-panel">
+    <div class="popup-panel writeoff-panel">
       <div class="popup-header">
         <div id="writeoff-title" class="popup-title"></div>
         <div id="writeoff-close" class="popup-close">×</div>
@@ -768,18 +777,19 @@
 
       const buttons = document.createElement('div');
       buttons.style.display = 'flex';
-      buttons.style.gap = '8px';
-      buttons.style.marginTop = '10px';
+      buttons.style.gap = '10px';
+      buttons.style.marginTop = '14px';
+      buttons.style.justifyContent = 'center';
 
       function makeButton(label) {
         const b = document.createElement('button');
         b.textContent = label;
-        b.style.padding = '4px 10px';
+        b.style.padding = '8px 18px';
         b.style.borderRadius = '999px';
         b.style.border = '1px solid #000000';
         b.style.background = '#ffffff';
         b.style.cursor = 'pointer';
-        b.style.fontSize = '0.85rem';
+        b.style.fontSize = '0.9rem';
         return b;
       }
 
@@ -856,11 +866,12 @@
       amountInput.max = String(maxAmount);
       amountInput.step = '1';
       amountInput.value = String(maxAmount);
-      amountInput.style.marginTop = '4px';
-      amountInput.style.width = '80px';
-      amountInput.style.padding = '4px 6px';
+      amountInput.style.marginTop = '6px';
+      amountInput.style.width = '100px';
+      amountInput.style.padding = '6px 8px';
       amountInput.style.borderRadius = '6px';
       amountInput.style.border = '1px solid #cccccc';
+      amountInput.style.textAlign = 'center';
       amountInput.inputMode = 'numeric';
       amountInput.pattern = '[0-9]*';
 
@@ -869,16 +880,17 @@
 
       const buttons = document.createElement('div');
       buttons.style.display = 'flex';
-      buttons.style.gap = '8px';
-      buttons.style.marginTop = '12px';
+      buttons.style.gap = '10px';
+      buttons.style.marginTop = '14px';
+      buttons.style.justifyContent = 'center';
 
       function makeButton(label, filled) {
         const b = document.createElement('button');
         b.textContent = label;
-        b.style.padding = '4px 12px';
+        b.style.padding = '8px 18px';
         b.style.borderRadius = '999px';
         b.style.cursor = 'pointer';
-        b.style.fontSize = '0.85rem';
+        b.style.fontSize = '0.9rem';
         if (filled) {
           b.style.background = '#000000';
           b.style.color = '#ffffff';
