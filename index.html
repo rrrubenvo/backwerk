@@ -52,20 +52,21 @@
       height: calc((100% - 4 * 15px) / 5);
       background: #e0e0e0;
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative;
     }
 
     .location {
-      padding: 0.4rem 0.8rem;
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 0.25rem 0.6rem;
       border-radius: 999px;
       background: #ffffff;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.8rem;
       color: #000000;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
   </style>
@@ -95,20 +96,4 @@
     const cols = 6;
     const rows = 5;
     const grid = document.getElementById('grid');
-
-    for (let r = 1; r <= rows; r += 1) {
-      for (let c = 1; c <= cols; c += 1) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell', `row-${r}`, `col-${c}`);
-
-        const location = document.createElement('div');
-        location.classList.add('location');
-        location.textContent = `loc. row ${r}, col ${c}`;
-
-        cell.appendChild(location);
-        grid.appendChild(cell);
-      }
-    }
-  </script>
-</body>
-</html>
+    const baseCharCo
