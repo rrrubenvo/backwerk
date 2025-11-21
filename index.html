@@ -140,7 +140,7 @@
     }
 
     function buildTableFromValues(values) {
-      const header = ['location', 'class', 'product', 'amount'];
+      const header = ['location', 'class', 'product', 'amount', 'start_time'];
       const rows = [];
       rows.push(header);
 
@@ -162,8 +162,9 @@
 
           let product = srcRow[2] || '';
           let amount = srcRow[3] || '';
+          let startTime = srcRow[4] || '';
 
-          rows.push([loc, color, product, amount]);
+          rows.push([loc, color, product, amount, startTime]);
         }
       }
       return rows;
