@@ -50,9 +50,24 @@
       box-sizing: border-box;
       flex: 0 0 calc((100% - 5 * 15px) / 6);
       height: calc((100% - 4 * 15px) / 5);
-      background: #e0e0e0;
       border-radius: 10px;
       position: relative;
+    }
+
+    .cell.grey {
+      background: #d0d0d0;
+    }
+
+    .cell.green {
+      background: #8ad48a;
+    }
+
+    .cell.orange {
+      background: #f5b97a;
+    }
+
+    .cell.red {
+      background: #f28f8f;
     }
 
     .location {
@@ -97,14 +112,78 @@
     const rows = 5;
     const grid = document.getElementById('grid');
     const baseCharCode = 'A'.charCodeAt(0);
+    const STORAGE_KEY = 'gridColors';
+    const VALID_COLORS = ['grey', 'green', 'orange', 'red'];
 
-    for (let r = 1; r <= rows; r += 1) {
-      for (let c = 1; c <= cols; c += 1) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell', `row-${r}`, `col-${c}`);
+    function createDefaultState() {
+      var state = {};
+      for (var r = 1; r <= rows; r += 1) {
+        for (var c = 1; c <= cols; c += 1) {
+          state[r + '-' + c] = 'grey';
+        }
+      }
+      return state;
+    }
 
-        const colLetter = String.fromCharCode(baseCharCode + c - 1);
-        const location = document.createElement('div');
+    function loadState() {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return null;
+      }
+      try {
+        var parsed = JSON.parse(raw);
+        return parsed;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    var gridState = loadState();
+    if (!gridState) {
+      gridState = createDefaultState();
+      saveState(gridState);
+    }
+
+    function setCellColor(row, col, color) {
+      if (VALID_COLORS.indexOf(color) === -1) {
+        return;
+      }
+
+      var key = row + '-' + col;
+      gridState[key] = color;
+      saveState(gridState);
+
+      var selector = '.row-' + row + '.col-' + col;
+      var cell = grid.querySelector(selector);
+      if (!cell) {
+        return;
+      }
+
+      VALID_COLORS.forEach(function (c) {
+        cell.classList.remove(c);
+      });
+      cell.classList.add(color);
+    }
+
+    for (var r = 1; r <= rows; r += 1) {
+      for (var c = 1; c <= cols; c += 1) {
+        var cell = document.createElement('div');
+        cell.classList.add('cell', 'row-' + r, 'col-' + c);
+
+        var key = r + '-' + c;
+        var colorClass = gridState[key];
+        if (VALID_COLORS.indexOf(colorClass) === -1) {
+          colorClass = 'grey';
+          gridState[key] = colorClass;
+        }
+        cell.classList.add(colorClass);
+
+        var colLetter = String.fromCharCode(baseCharCode + c - 1);
+        var location = document.createElement('div');
         location.classList.add('location');
         location.textContent = colLetter + r;
 
@@ -112,6 +191,8 @@
         grid.appendChild(cell);
       }
     }
+
+    saveState(gridState);
   </script>
 </body>
 </html>
