@@ -106,14 +106,19 @@
       flex-direction: column;
       gap: 3px;
       font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      padding: 4px 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    }
+
+    .cell.grey .cell-meta {
+      display: none;
     }
 
     .cell-product,
     .cell-amount,
     .cell-time {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 6px;
-      padding: 2px 6px;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -211,31 +216,40 @@
     .product-text {
       font-weight: 600;
       line-height: 1.2;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: calc(1.2em * 2);
+      max-height: calc(1.2em * 2);
     }
 
     .product-amount-input {
       width: 100%;
       box-sizing: border-box;
-      padding: 4px 6px;
-      border-radius: 6px;
+      padding: 6px 8px;
+      border-radius: 8px;
       border: 1px solid #cccccc;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
+      text-align: center;
     }
 
     .product-ok {
       align-self: flex-end;
       margin-top: 4px;
-      padding: 3px 10px;
+      padding: 4px 12px;
       border-radius: 999px;
-      background: #007bff;
+      background: #000000;
       color: #ffffff;
       font-size: 0.75rem;
       cursor: pointer;
       user-select: none;
+      transition: background 120ms ease-out, transform 120ms ease-out;
     }
 
     .product-ok:hover {
-      background: #005fcc;
+      background: #333333;
+      transform: translateY(-1px);
     }
   </style>
 </head>
@@ -378,19 +392,27 @@
     function computeElapsedLabel(startEpoch) {
       const base = Number(startEpoch);
       if (!base || base <= 0) {
-        return '';
+        return '0 min';
       }
       const diffMs = Date.now() - base;
       if (diffMs <= 0) {
         return '0 min';
       }
       const minutes = Math.floor(diffMs / 60000);
-      if (minutes < 60) {
-        return String(minutes) + ' min';
+      return String(minutes) + ' min';
+    }
+
+    function formatProductDisplay(productId) {
+      if (!productId) {
+        return '';
       }
-      const hours = Math.floor(minutes / 60);
-      const rem = minutes % 60;
-      return String(hours) + 'h ' + String(rem) + 'm';
+      const idStr = String(productId);
+      for (let i = 0; i < products.length; i += 1) {
+        if (products[i].id === idStr) {
+          return idStr + ' - ' + products[i].title;
+        }
+      }
+      return idStr;
     }
 
     function buildGridFromMatrix(matrix) {
@@ -437,16 +459,16 @@
 
           const productDiv = document.createElement('div');
           productDiv.classList.add('cell-product');
-          productDiv.textContent = productId ? productId : '';
+          productDiv.textContent = productId ? formatProductDisplay(productId) : '';
 
           const amountDiv = document.createElement('div');
           amountDiv.classList.add('cell-amount');
-          amountDiv.textContent = amount ? amount : '';
+          amountDiv.textContent = amount ? 'aantal: ' + amount : '';
 
           const timeDiv = document.createElement('div');
           timeDiv.classList.add('cell-time');
           if (startEpoch !== null) {
-            timeDiv.textContent = computeElapsedLabel(startEpochStr);
+            timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
           } else {
             timeDiv.textContent = '';
           }
@@ -576,10 +598,12 @@
 
         const input = document.createElement('input');
         input.type = 'number';
-        input.min = '0';
-        input.value = '';
+        input.min = '1';
+        input.step = '1';
+        input.value = '1';
         input.classList.add('product-amount-input');
         input.inputMode = 'numeric';
+        input.pattern = '[0-9]*';
 
         const ok = document.createElement('div');
         ok.classList.add('product-ok');
@@ -632,6 +656,11 @@
         }
       }
 
+      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
+        cell.classList.remove(COLOR_CLASSES[i]);
+      }
+      cell.classList.add('green');
+
       if (productId) {
         cell.classList.add(productId);
       }
@@ -645,13 +674,13 @@
         const amountDiv = meta.querySelector('.cell-amount');
         const timeDiv = meta.querySelector('.cell-time');
         if (productDiv) {
-          productDiv.textContent = productId ? productId : '';
+          productDiv.textContent = productId ? formatProductDisplay(productId) : '';
         }
         if (amountDiv) {
-          amountDiv.textContent = amount ? String(amount) : '';
+          amountDiv.textContent = amount ? 'aantal: ' + String(amount) : '';
         }
         if (timeDiv) {
-          timeDiv.textContent = '0 min';
+          timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
         }
       }
     }
@@ -665,8 +694,8 @@
       const input = productCell.querySelector('.product-amount-input');
       const raw = input ? input.value : '';
       let amount = parseInt(raw, 10);
-      if (!amount || amount < 0) {
-        amount = 0;
+      if (!amount || amount < 1) {
+        amount = 1;
       }
       const now = Date.now();
       const startEpochStr = String(now);
@@ -704,7 +733,7 @@
         if (!timeDiv) {
           continue;
         }
-        timeDiv.textContent = computeElapsedLabel(startEpochStr);
+        timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
       }
     }
 
