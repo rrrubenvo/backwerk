@@ -117,8 +117,7 @@
     }
 
     .cell-product,
-    .cell-amount,
-    .cell-time {
+    .cell-amount {
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -128,6 +127,33 @@
 
     .cell-product {
       font-weight: 600;
+    }
+
+    .cell-time-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .cell-time {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #111111;
+    }
+
+    .cell-clear {
+      font-size: 0.8rem;
+      cursor: pointer;
+      user-select: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .cell-clear:hover {
+      background: rgba(0, 0, 0, 0.06);
     }
 
     .overlay {
@@ -178,6 +204,15 @@
     .popup-title {
       font-size: 1rem;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .popup-title-location {
+      font-weight: 600;
+      opacity: 0.8;
     }
 
     .popup-close {
@@ -279,7 +314,10 @@
   <div id="popup" class="popup">
     <div class="popup-panel">
       <div class="popup-header">
-        <div class="popup-title">Select product</div>
+        <div class="popup-title">
+          <span id="popup-title-main">Select product</span>
+          <span id="popup-title-location" class="popup-title-location"></span>
+        </div>
         <div id="popup-close" class="popup-close">×</div>
       </div>
       <div id="product-grid" class="product-grid"></div>
@@ -299,6 +337,7 @@
     const popup = document.getElementById('popup');
     const popupClose = document.getElementById('popup-close');
     const productGrid = document.getElementById('product-grid');
+    const popupTitleLocation = document.getElementById('popup-title-location');
 
     let tableRows = [];
     let statusMatrix = [];
@@ -465,6 +504,9 @@
           amountDiv.classList.add('cell-amount');
           amountDiv.textContent = amount ? 'aantal: ' + amount : '';
 
+          const timeRow = document.createElement('div');
+          timeRow.classList.add('cell-time-row');
+
           const timeDiv = document.createElement('div');
           timeDiv.classList.add('cell-time');
           if (startEpoch !== null) {
@@ -473,9 +515,20 @@
             timeDiv.textContent = '';
           }
 
+          const clearDiv = document.createElement('div');
+          clearDiv.classList.add('cell-clear');
+          clearDiv.textContent = '🗑';
+          clearDiv.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            clearLocation(cell);
+          });
+
+          timeRow.appendChild(timeDiv);
+          timeRow.appendChild(clearDiv);
+
           meta.appendChild(productDiv);
           meta.appendChild(amountDiv);
-          meta.appendChild(timeDiv);
+          meta.appendChild(timeRow);
 
           cell.appendChild(location);
           cell.appendChild(meta);
@@ -585,6 +638,16 @@
       const colIndex = parseInt(cell.dataset.col, 10);
       activeCellTableIndex = indexFromRowCol(rowIndex, colIndex) + 1;
 
+      let locLabel = '';
+      const locEl = cell.querySelector('.location');
+      if (locEl) {
+        locLabel = locEl.textContent;
+      } else {
+        const colLetter = String.fromCharCode(baseCharCode + colIndex - 1);
+        locLabel = colLetter + rowIndex;
+      }
+      popupTitleLocation.textContent = '(' + locLabel + ')';
+
       productGrid.innerHTML = '';
       for (let i = 0; i < products.length; i += 1) {
         const p = products[i];
@@ -627,8 +690,73 @@
       overlay.classList.remove('active');
       popup.classList.remove('active');
       productGrid.innerHTML = '';
+      popupTitleLocation.textContent = '';
       activeCell = null;
       activeCellTableIndex = null;
+    }
+
+    function clearLocation(cell) {
+      const row = parseInt(cell.dataset.row, 10);
+      const col = parseInt(cell.dataset.col, 10);
+      if (!row || !col) {
+        return;
+      }
+      const tableIndex = indexFromRowCol(row, col) + 1;
+      if (!tableRows[tableIndex]) {
+        return;
+      }
+
+      tableRows[tableIndex][1] = 'grey';
+      tableRows[tableIndex][2] = '';
+      tableRows[tableIndex][3] = '';
+      tableRows[tableIndex][4] = '';
+
+      cell.dataset.startEpoch = '';
+
+      const existing = [];
+      for (let i = 0; i < cell.classList.length; i += 1) {
+        existing.push(cell.classList.item(i));
+      }
+
+      for (let i = 0; i < products.length; i += 1) {
+        cell.classList.remove(products[i].id);
+      }
+
+      for (let i = 0; i < existing.length; i += 1) {
+        const cls = existing[i];
+        if (cls.indexOf('amount_') === 0 || cls.indexOf('start_time_') === 0) {
+          cell.classList.remove(cls);
+        }
+      }
+
+      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
+        cell.classList.remove(COLOR_CLASSES[i]);
+      }
+      cell.classList.add('grey');
+
+      const meta = cell.querySelector('.cell-meta');
+      if (meta) {
+        const productDiv = meta.querySelector('.cell-product');
+        const amountDiv = meta.querySelector('.cell-amount');
+        const timeDiv = meta.querySelector('.cell-time');
+        if (productDiv) {
+          productDiv.textContent = '';
+        }
+        if (amountDiv) {
+          amountDiv.textContent = '';
+        }
+        if (timeDiv) {
+          timeDiv.textContent = '';
+        }
+      }
+
+      const rowIndex = row - 1;
+      const colIndex = col - 1;
+      if (rowIndex >= 0 && colIndex >= 0 && rowIndex < ROWS && colIndex < COLS) {
+        statusMatrix[rowIndex][colIndex] = 'grey';
+      }
+
+      scheduleSync();
     }
 
     function updateCellForSelection(cell, tableIndex, productId, amount, startEpochStr) {
