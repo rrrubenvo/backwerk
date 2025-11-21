@@ -133,9 +133,21 @@
       return matrix;
     }
 
-    function createInitialMatrix() {
-      const matrix = createEmptyMatrix(ROWS, COLS, 'grey');
-      matrix[3][5] = 'green';  
+    function normalizeSheetValues(values) {
+      const matrix = [];
+      for (let r = 0; r < ROWS; r += 1) {
+        const srcRow = values && values[r] ? values[r] : [];
+        const row = [];
+        for (let c = 0; c < COLS; c += 1) {
+          const raw = srcRow[c] || '';
+          if (COLOR_CLASSES.indexOf(raw) === -1) {
+            row.push('grey');
+          } else {
+            row.push(raw);
+          }
+        }
+        matrix.push(row);
+      }
       return matrix;
     }
 
@@ -224,24 +236,49 @@
       });
     }
 
+    async function fetchSheetValues() {
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'GET'
+        });
+        if (!response.ok) {
+          return null;
+        }
+        const data = await response.json();
+        if (data && data.values) {
+          return data.values;
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
+
     async function sendStatusToSheet() {
       try {
-        const body = {
-          values: statusMatrix
-        };
+        const payload = { values: statusMatrix };
         await fetch(SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain;charset=utf-8'
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(payload)
         });
       } catch (e) {
       }
     }
 
-    function init() {
-      statusMatrix = createInitialMatrix();
+    async function init() {
+      const sheetValues = await fetchSheetValues();
+      if (sheetValues) {
+        statusMatrix = normalizeSheetValues(sheetValues);
+      } else {
+        statusMatrix = createEmptyMatrix(ROWS, COLS, 'grey');
+      }
+
+      statusMatrix[3][5] = 'green';
+
       buildGridFromMatrix(statusMatrix);
       startObserver();
       sendStatusToSheet();
