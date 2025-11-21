@@ -324,6 +324,16 @@
     </div>
   </div>
 
+  <div id="writeoff-popup" class="popup">
+    <div class="popup-panel">
+      <div class="popup-header">
+        <div id="writeoff-title" class="popup-title"></div>
+        <div id="writeoff-close" class="popup-close">×</div>
+      </div>
+      <div id="writeoff-content"></div>
+    </div>
+  </div>
+
   <script>
     const COLS = 6;
     const ROWS = 5;
@@ -339,6 +349,11 @@
     const productGrid = document.getElementById('product-grid');
     const popupTitleLocation = document.getElementById('popup-title-location');
 
+    const writeoffPopup = document.getElementById('writeoff-popup');
+    const writeoffClose = document.getElementById('writeoff-close');
+    const writeoffTitle = document.getElementById('writeoff-title');
+    const writeoffContent = document.getElementById('writeoff-content');
+
     let tableRows = [];
     let statusMatrix = [];
     let products = [];
@@ -347,6 +362,7 @@
     let activeCell = null;
     let activeCellTableIndex = null;
     let elapsedTimerId = null;
+    let writeoffCell = null;
 
     function indexFromRowCol(r, c) {
       return (r - 1) * COLS + (c - 1);
@@ -441,15 +457,24 @@
       return String(minutes) + ' min';
     }
 
+    function getProductTitleById(productId) {
+      const idStr = String(productId);
+      for (let i = 0; i < products.length; i += 1) {
+        if (products[i].id === idStr) {
+          return products[i].title;
+        }
+      }
+      return '';
+    }
+
     function formatProductDisplay(productId) {
       if (!productId) {
         return '';
       }
       const idStr = String(productId);
-      for (let i = 0; i < products.length; i += 1) {
-        if (products[i].id === idStr) {
-          return idStr + ' - ' + products[i].title;
-        }
+      const title = getProductTitleById(idStr);
+      if (title) {
+        return idStr + ' - ' + title;
       }
       return idStr;
     }
@@ -520,7 +545,7 @@
           clearDiv.textContent = '🗑';
           clearDiv.addEventListener('click', function (ev) {
             ev.stopPropagation();
-            clearLocation(cell);
+            openWriteoffConfirm(cell);
           });
 
           timeRow.appendChild(timeDiv);
@@ -632,6 +657,28 @@
       }
     }
 
+    async function sendWriteOff(productId, productTitle, amount) {
+      try {
+        const payload = {
+          values: tableRows,
+          writeOffs: [{
+            productId: productId,
+            productTitle: productTitle,
+            amount: String(amount)
+          }]
+        };
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+      }
+    }
+
     function openPopupForCell(cell) {
       activeCell = cell;
       const rowIndex = parseInt(cell.dataset.row, 10);
@@ -687,12 +734,197 @@
     }
 
     function closePopup() {
-      overlay.classList.remove('active');
       popup.classList.remove('active');
       productGrid.innerHTML = '';
       popupTitleLocation.textContent = '';
       activeCell = null;
       activeCellTableIndex = null;
+      const otherOpen = writeoffPopup.classList.contains('active');
+      if (!otherOpen) {
+        overlay.classList.remove('active');
+      }
+    }
+
+    function openWriteoffConfirm(cell) {
+      writeoffCell = cell;
+
+      const rowIndex = parseInt(cell.dataset.row, 10);
+      const colIndex = parseInt(cell.dataset.col, 10);
+
+      let locLabel = '';
+      const locEl = cell.querySelector('.location');
+      if (locEl) {
+        locLabel = locEl.textContent;
+      } else {
+        const colLetter = String.fromCharCode(baseCharCode + colIndex - 1);
+        locLabel = colLetter + rowIndex;
+      }
+
+      writeoffTitle.textContent = 'Product afschrijven?';
+      writeoffContent.innerHTML = '';
+
+      const msg = document.createElement('div');
+      msg.textContent = 'Locatie ' + locLabel;
+
+      const buttons = document.createElement('div');
+      buttons.style.display = 'flex';
+      buttons.style.gap = '8px';
+      buttons.style.marginTop = '10px';
+
+      function makeButton(label) {
+        const b = document.createElement('button');
+        b.textContent = label;
+        b.style.padding = '4px 10px';
+        b.style.borderRadius = '999px';
+        b.style.border = '1px solid #000000';
+        b.style.background = '#ffffff';
+        b.style.cursor = 'pointer';
+        b.style.fontSize = '0.85rem';
+        return b;
+      }
+
+      const btnJa = makeButton('ja');
+      const btnNee = makeButton('nee');
+      const btnAnnuleren = makeButton('annuleren');
+
+      btnJa.addEventListener('click', function () {
+        openWriteoffAmountStep();
+      });
+
+      btnNee.addEventListener('click', function () {
+        clearLocation(cell);
+        closeWriteoffPopup();
+      });
+
+      btnAnnuleren.addEventListener('click', function () {
+        closeWriteoffPopup();
+      });
+
+      buttons.appendChild(btnJa);
+      buttons.appendChild(btnNee);
+      buttons.appendChild(btnAnnuleren);
+
+      writeoffContent.appendChild(msg);
+      writeoffContent.appendChild(buttons);
+
+      overlay.classList.add('active');
+      writeoffPopup.classList.add('active');
+    }
+
+    function openWriteoffAmountStep() {
+      if (!writeoffCell) {
+        closeWriteoffPopup();
+        return;
+      }
+      const rowIndex = parseInt(writeoffCell.dataset.row, 10);
+      const colIndex = parseInt(writeoffCell.dataset.col, 10);
+      const tableIndex = indexFromRowCol(rowIndex, colIndex) + 1;
+      const record = tableRows[tableIndex];
+      if (!record) {
+        closeWriteoffPopup();
+        return;
+      }
+
+      const locEl = writeoffCell.querySelector('.location');
+      const locLabel = locEl ? locEl.textContent : (String.fromCharCode(baseCharCode + colIndex - 1) + rowIndex);
+      const productId = record[2] ? String(record[2]) : '';
+      const amountStr = record[3] ? String(record[3]) : '';
+      let maxAmount = parseInt(amountStr, 10);
+      if (!maxAmount || maxAmount < 1) {
+        maxAmount = 1;
+      }
+
+      const productDisplay = formatProductDisplay(productId);
+      const productTitle = getProductTitleById(productId);
+
+      writeoffTitle.textContent = 'Product afschrijven';
+      writeoffContent.innerHTML = '';
+
+      const info = document.createElement('div');
+      info.innerHTML = 'Locatie <strong>' + locLabel + '</strong><br>Product <strong>' + productDisplay + '</strong>';
+
+      const amountWrap = document.createElement('div');
+      amountWrap.style.marginTop = '10px';
+
+      const amountLabel = document.createElement('div');
+      amountLabel.textContent = 'Aantal af te schrijven (max ' + String(maxAmount) + '):';
+
+      const amountInput = document.createElement('input');
+      amountInput.id = 'writeoff-amount-input';
+      amountInput.type = 'number';
+      amountInput.min = '1';
+      amountInput.max = String(maxAmount);
+      amountInput.step = '1';
+      amountInput.value = String(maxAmount);
+      amountInput.style.marginTop = '4px';
+      amountInput.style.width = '80px';
+      amountInput.style.padding = '4px 6px';
+      amountInput.style.borderRadius = '6px';
+      amountInput.style.border = '1px solid #cccccc';
+      amountInput.inputMode = 'numeric';
+      amountInput.pattern = '[0-9]*';
+
+      amountWrap.appendChild(amountLabel);
+      amountWrap.appendChild(amountInput);
+
+      const buttons = document.createElement('div');
+      buttons.style.display = 'flex';
+      buttons.style.gap = '8px';
+      buttons.style.marginTop = '12px';
+
+      function makeButton(label, filled) {
+        const b = document.createElement('button');
+        b.textContent = label;
+        b.style.padding = '4px 12px';
+        b.style.borderRadius = '999px';
+        b.style.cursor = 'pointer';
+        b.style.fontSize = '0.85rem';
+        if (filled) {
+          b.style.background = '#000000';
+          b.style.color = '#ffffff';
+          b.style.border = '1px solid #000000';
+        } else {
+          b.style.background = '#ffffff';
+          b.style.color = '#000000';
+          b.style.border = '1px solid #000000';
+        }
+        return b;
+      }
+
+      const btnAfschrijven = makeButton('afschrijven', true);
+      const btnAnnuleren = makeButton('annuleren', false);
+
+      btnAfschrijven.addEventListener('click', function () {
+        let selected = parseInt(amountInput.value, 10);
+        if (!selected || selected < 1) {
+          selected = 1;
+        }
+        if (selected > maxAmount) {
+          selected = maxAmount;
+        }
+        handleWriteoffConfirm(productId, productTitle, selected);
+      });
+
+      btnAnnuleren.addEventListener('click', function () {
+        closeWriteoffPopup();
+      });
+
+      buttons.appendChild(btnAfschrijven);
+      buttons.appendChild(btnAnnuleren);
+
+      writeoffContent.appendChild(info);
+      writeoffContent.appendChild(amountWrap);
+      writeoffContent.appendChild(buttons);
+    }
+
+    function closeWriteoffPopup() {
+      writeoffPopup.classList.remove('active');
+      writeoffContent.innerHTML = '';
+      writeoffCell = null;
+      const otherOpen = popup.classList.contains('active');
+      if (!otherOpen) {
+        overlay.classList.remove('active');
+      }
     }
 
     function clearLocation(cell) {
@@ -757,6 +989,17 @@
       }
 
       scheduleSync();
+    }
+
+    function handleWriteoffConfirm(productId, productTitle, amount) {
+      if (!writeoffCell) {
+        closeWriteoffPopup();
+        return;
+      }
+      clearLocation(writeoffCell);
+      sendWriteOff(productId, productTitle, amount);
+      closeWriteoffPopup();
+      updateElapsedTimes();
     }
 
     function updateCellForSelection(cell, tableIndex, productId, amount, startEpochStr) {
@@ -869,8 +1112,12 @@
       popupClose.addEventListener('click', function () {
         closePopup();
       });
+      writeoffClose.addEventListener('click', function () {
+        closeWriteoffPopup();
+      });
       overlay.addEventListener('click', function () {
         closePopup();
+        closeWriteoffPopup();
       });
 
       const sheetData = await fetchSheetData();
