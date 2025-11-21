@@ -24,12 +24,33 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
+      justify-content: space-between;
       z-index: 1;
     }
 
     .logo svg {
       display: block;
       height: 32px;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-button {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #000000;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      user-select: none;
+    }
+
+    .header-button:hover {
+      background: #f0f0f0;
     }
 
     .main {
@@ -199,8 +220,51 @@
       width: min(90%, 480px);
     }
 
+    .writeoff-list-panel {
+      max-width: 720px;
+      width: min(95%, 720px);
+    }
+
     #writeoff-content {
       text-align: center;
+    }
+
+    #writeoff-list-content {
+      font-size: 0.85rem;
+    }
+
+    .writeoff-list-filters {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #writeoff-date-input {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #cccccc;
+      font-size: 0.85rem;
+    }
+
+    .writeoff-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .writeoff-table th,
+    .writeoff-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #eeeeee;
+      text-align: left;
+    }
+
+    .writeoff-empty {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 6px;
     }
 
     .popup-header {
@@ -312,6 +376,9 @@
         <path class="a" d="M206.58,300.8a14.72,14.72,0,0,0,.08-1.58,16.23,16.23,0,0,0-.08-1.69,3.1,3.1,0,0,0-.35-1.18,1.48,1.48,0,0,0-.71-.67,2.85,2.85,0,0,0-1.19-.21,2.08,2.08,0,0,0-.85.17,2.33,2.33,0,0,0-.69.44,1,1,0,0,0-.18.17.56.56,0,0,0-.05.27v5.72a.42.42,0,0,0,.25.37,2.14,2.14,0,0,0,.76.27,5.15,5.15,0,0,0,.86.07,2.25,2.25,0,0,0,1.13-.25,1.72,1.72,0,0,0,.69-.72,3.67,3.67,0,0,0,.33-1.18m11.88,1.3v-2c0-.11-.05-.17-.13-.17a2.26,2.26,0,0,0-.39.07l-.81.17a4,4,0,0,0-1.41.53,1.21,1.21,0,0,0-.48,1.07,1.05,1.05,0,0,0,.41.95,1.74,1.74,0,0,0,1,.27,2.54,2.54,0,0,0,.88-.14,3.13,3.13,0,0,0,.71-.35.41.41,0,0,0,.23-.39m28.92,2.46a.83.83,0,0,1-.26.6,1.09,1.09,0,0,1-.76.25h-1.24a1.92,1.92,0,0,1-1-.25,2.22,2.22,0,0,1-.67-.72l-2.43-4.1c-.07-.1-.13-.15-.2-.15a.77.77,0,0,0-.32.07l-.4.15a.31.31,0,0,0-.2.32v3.19a1.42,1.42,0,0,1-.4,1.14,1.72,1.72,0,0,1-1.17.35H238a1.67,1.67,0,0,1-1.14-.35,1.42,1.42,0,0,1-.4-1.14V289.35a1.42,1.42,0,0,1,.4-1.14,1.72,1.72,0,0,1,1.17-.35h.34a1.72,1.72,0,0,1,1.17.35,1.42,1.42,0,0,1,.4,1.14v7.93c0,.13,0,.2.15.2a.69.69,0,0,0,.27-.1l.5-.22a1,1,0,0,0,.42-.35l2-2.83a3,3,0,0,1,.66-.73,1.62,1.62,0,0,1,1-.24h1.24a.89.89,0,0,1,.61.21.7.7,0,0,1,.23.53,1.28,1.28,0,0,1-.27.75l-2.73,3.75a.46.46,0,0,0-.08.25.91.91,0,0,0,.05.22l3.33,5.32a1.09,1.09,0,0,1,.15.52m-13.57-.69a1,1,0,0,1-.76,1,6.43,6.43,0,0,1-2.8.59,7.63,7.63,0,0,1-2.05-.29,4.4,4.4,0,0,1-1.84-1,5.08,5.08,0,0,1-1.32-2,8.46,8.46,0,0,1-.5-3.12,7.86,7.86,0,0,1,.5-3,5.54,5.54,0,0,1,1.32-2,4.84,4.84,0,0,1,1.84-1.08,6.66,6.66,0,0,1,2.05-.33,6.82,6.82,0,0,1,2.46.39,1.66,1.66,0,0,1,.58.37.74.74,0,0,1,.23.54,2.21,2.21,0,0,1,0,.35,3.5,3.5,0,0,1-.16.53,1.13,1.13,0,0,1-.33.59.81.81,0,0,1-.55.17,1,1,0,0,1-.36-.05l-.37-.11c-.13,0-.3-.07-.5-.11a5.05,5.05,0,0,0-.76-.05,3.44,3.44,0,0,0-1.07.16,1.69,1.69,0,0,0-.76.57,2.83,2.83,0,0,0-.46,1.13,8.52,8.52,0,0,0-.16,1.85,8.72,8.72,0,0,0,.16,1.87,2.63,2.63,0,0,0,.48,1.13,1.6,1.6,0,0,0,.78.56,3.15,3.15,0,0,0,1.06.16,5,5,0,0,0,.83-.06,3.61,3.61,0,0,0,.59-.15l.43-.14a1.25,1.25,0,0,1,.4-.06.88.88,0,0,1,.88.68,2.39,2.39,0,0,1,.16.48,1.15,1.15,0,0,1,0,.31m-11.73.32a1.05,1.05,0,0,1-.28.76,1.3,1.3,0,0,1-.84.34l-.52,0-.44,0a1.19,1.19,0,0,1-.71-.19,1,1,0,0,1-.37-.49c0-.14-.06-.24-.07-.31s0-.11-.08-.11a.21.21,0,0,0-.14.07,4,4,0,0,1-1.27.8,4.64,4.64,0,0,1-1.75.31,4.47,4.47,0,0,1-1.4-.21,3,3,0,0,1-1.1-.64,3.1,3.1,0,0,1-.74-1.08,4,4,0,0,1-.27-1.56,3.66,3.66,0,0,1,.31-1.53,3.19,3.19,0,0,1,.86-1.1,4.88,4.88,0,0,1,1.31-.75,11.78,11.78,0,0,1,1.67-.49l2-.42a.28.28,0,0,0,.25-.29V297a1.35,1.35,0,0,0-.57-1.31,3.35,3.35,0,0,0-1.62-.31,4.68,4.68,0,0,0-1,.12c-.35.08-.71.18-1.07.3a1.53,1.53,0,0,1-.41.07c-.44,0-.74-.29-.88-.86a2,2,0,0,1-.1-.45,2.11,2.11,0,0,1,0-.31,1,1,0,0,1,.21-.59,1.18,1.18,0,0,1,.63-.39,10.52,10.52,0,0,1,1.74-.4,11.91,11.91,0,0,1,1.76-.14,5.83,5.83,0,0,1,3.62.93,3.7,3.7,0,0,1,1.19,3.09v5.52c0,.29,0,.53,0,.72s0,.35.06.48.05.25.08.35a1.87,1.87,0,0,1,0,.34m-12-5.17q0,6.47-5.76,6.46a5.45,5.45,0,0,1-1.3-.16,3.7,3.7,0,0,1-1-.43.4.4,0,0,0-.17-.08s-.1.08-.17.22a.5.5,0,0,1-.34.32,2.32,2.32,0,0,1-.66.08h-.25c-.87,0-1.3-.48-1.3-1.45V289.35a1.45,1.45,0,0,1,.39-1.13,1.76,1.76,0,0,1,1.16-.34H201a1.69,1.69,0,0,1,1.13.34,1.45,1.45,0,0,1,.39,1.13v4.38c0,.08,0,.12.1.12s.11,0,.18-.12a2.51,2.51,0,0,1,1-.67,3.71,3.71,0,0,1,1.34-.24,5.84,5.84,0,0,1,2.05.34,3.88,3.88,0,0,1,1.57,1.09,5.1,5.1,0,0,1,1,1.93,10.18,10.18,0,0,1,.34,2.84m40.32,6V288.35a3,3,0,0,0-3-3H199a3,3,0,0,0-3,3V305a3,3,0,0,0,3,3h48.39a3,3,0,0,0,3-3" transform="translate(-196 -285.32)"></path>
       </svg>
     </div>
+    <div class="header-buttons">
+      <div id="writeoff-list-button" class="header-button">afschrijvingen</div>
+    </div>
   </header>
 
   <main class="main">
@@ -343,6 +410,24 @@
     </div>
   </div>
 
+  <div id="writeoff-list-popup" class="popup">
+    <div class="popup-panel writeoff-list-panel">
+      <div class="popup-header">
+        <div class="popup-title">Afschrijvingen</div>
+        <div id="writeoff-list-close" class="popup-close">×</div>
+      </div>
+      <div id="writeoff-list-content">
+        <div class="writeoff-list-filters">
+          <label>
+            Datum:
+            <input type="date" id="writeoff-date-input">
+          </label>
+        </div>
+        <div id="writeoff-list-table-wrapper"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const COLS = 6;
     const ROWS = 5;
@@ -363,9 +448,16 @@
     const writeoffTitle = document.getElementById('writeoff-title');
     const writeoffContent = document.getElementById('writeoff-content');
 
+    const writeoffListPopup = document.getElementById('writeoff-list-popup');
+    const writeoffListClose = document.getElementById('writeoff-list-close');
+    const writeoffListButton = document.getElementById('writeoff-list-button');
+    const writeoffDateInput = document.getElementById('writeoff-date-input');
+    const writeoffListTableWrapper = document.getElementById('writeoff-list-table-wrapper');
+
     let tableRows = [];
     let statusMatrix = [];
     let products = [];
+    let writeOffs = [];
     let syncTimeoutId = null;
     let observer = null;
     let activeCell = null;
@@ -448,6 +540,32 @@
         list.push({
           id: String(id).trim(),
           title: String(title).trim()
+        });
+      }
+      return list;
+    }
+
+    function buildWriteOffsFromValues(rows) {
+      const list = [];
+      if (!rows) {
+        return list;
+      }
+      for (let i = 0; i < rows.length; i += 1) {
+        const row = rows[i] || [];
+        const date = row[0] ? String(row[0]) : '';
+        const time = row[1] ? String(row[1]) : '';
+        const productId = row[2] ? String(row[2]) : '';
+        const productTitle = row[3] ? String(row[3]) : '';
+        const amount = row[4] ? String(row[4]) : '';
+        if (!date && !time && !productId && !productTitle && !amount) {
+          continue;
+        }
+        list.push({
+          date: date,
+          time: time,
+          productId: productId,
+          productTitle: productTitle,
+          amount: amount
         });
       }
       return list;
@@ -748,7 +866,7 @@
       popupTitleLocation.textContent = '';
       activeCell = null;
       activeCellTableIndex = null;
-      const otherOpen = writeoffPopup.classList.contains('active');
+      const otherOpen = writeoffPopup.classList.contains('active') || writeoffListPopup.classList.contains('active');
       if (!otherOpen) {
         overlay.classList.remove('active');
       }
@@ -933,7 +1051,7 @@
       writeoffPopup.classList.remove('active');
       writeoffContent.innerHTML = '';
       writeoffCell = null;
-      const otherOpen = popup.classList.contains('active');
+      const otherOpen = popup.classList.contains('active') || writeoffListPopup.classList.contains('active');
       if (!otherOpen) {
         overlay.classList.remove('active');
       }
@@ -1003,6 +1121,28 @@
       scheduleSync();
     }
 
+    function addLocalWriteOffEntry(productId, productTitle, amount) {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth() + 1;
+      const d = now.getDate();
+      const hh = now.getHours();
+      const mm = now.getMinutes();
+      const ddStr = d < 10 ? '0' + d : String(d);
+      const mmStr = m < 10 ? '0' + m : String(m);
+      const hourStr = hh < 10 ? '0' + hh : String(hh);
+      const minStr = mm < 10 ? '0' + mm : String(mm);
+      const dateStr = ddStr + '-' + mmStr + '-' + String(y);
+      const timeStr = hourStr + ':' + minStr;
+      writeOffs.push({
+        date: dateStr,
+        time: timeStr,
+        productId: String(productId),
+        productTitle: String(productTitle),
+        amount: String(amount)
+      });
+    }
+
     function handleWriteoffConfirm(productId, productTitle, amount) {
       if (!writeoffCell) {
         closeWriteoffPopup();
@@ -1010,6 +1150,7 @@
       }
       clearLocation(writeoffCell);
       sendWriteOff(productId, productTitle, amount);
+      addLocalWriteOffEntry(productId, productTitle, amount);
       closeWriteoffPopup();
       updateElapsedTimes();
     }
@@ -1120,6 +1261,111 @@
       }
     }
 
+    function getTodayDateString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      const mm = month < 10 ? '0' + month : String(month);
+      const dd = day < 10 ? '0' + day : String(day);
+      return year + '-' + mm + '-' + dd;
+    }
+
+    function formatInputToSheetDate(inputDateStr) {
+      if (!inputDateStr) {
+        return '';
+      }
+      const parts = inputDateStr.split('-');
+      if (parts.length !== 3) {
+        return '';
+      }
+      const y = parts[0];
+      const m = parts[1];
+      const d = parts[2];
+      return d + '-' + m + '-' + y;
+    }
+
+    function renderWriteoffListForDate(inputDateStr) {
+      if (!writeoffListTableWrapper) {
+        return;
+      }
+      writeoffListTableWrapper.innerHTML = '';
+      const targetDate = formatInputToSheetDate(inputDateStr);
+      const list = [];
+      for (let i = 0; i < writeOffs.length; i += 1) {
+        const w = writeOffs[i];
+        if (w.date === targetDate) {
+          list.push(w);
+        }
+      }
+
+      if (list.length === 0) {
+        const empty = document.createElement('div');
+        empty.classList.add('writeoff-empty');
+        empty.textContent = 'Geen afschrijvingen voor deze datum.';
+        writeoffListTableWrapper.appendChild(empty);
+        return;
+      }
+
+      const table = document.createElement('table');
+      table.classList.add('writeoff-table');
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      const headers = ['Tijd', 'Product ID', 'Product', 'Aantal'];
+      for (let i = 0; i < headers.length; i += 1) {
+        const th = document.createElement('th');
+        th.textContent = headers[i];
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+
+      const tbody = document.createElement('tbody');
+      for (let i = 0; i < list.length; i += 1) {
+        const w = list[i];
+        const tr = document.createElement('tr');
+
+        const tdTime = document.createElement('td');
+        tdTime.textContent = w.time;
+
+        const tdId = document.createElement('td');
+        tdId.textContent = w.productId;
+
+        const tdTitle = document.createElement('td');
+        tdTitle.textContent = w.productTitle;
+
+        const tdAmount = document.createElement('td');
+        tdAmount.textContent = w.amount;
+
+        tr.appendChild(tdTime);
+        tr.appendChild(tdId);
+        tr.appendChild(tdTitle);
+        tr.appendChild(tdAmount);
+
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      writeoffListTableWrapper.appendChild(table);
+    }
+
+    function openWriteoffListPopup() {
+      const todayStr = getTodayDateString();
+      writeoffDateInput.value = todayStr;
+      renderWriteoffListForDate(todayStr);
+      overlay.classList.add('active');
+      writeoffListPopup.classList.add('active');
+    }
+
+    function closeWriteoffListPopup() {
+      writeoffListPopup.classList.remove('active');
+      const otherOpen = popup.classList.contains('active') || writeoffPopup.classList.contains('active');
+      if (!otherOpen) {
+        overlay.classList.remove('active');
+      }
+    }
+
     async function init() {
       popupClose.addEventListener('click', function () {
         closePopup();
@@ -1127,17 +1373,30 @@
       writeoffClose.addEventListener('click', function () {
         closeWriteoffPopup();
       });
+      writeoffListClose.addEventListener('click', function () {
+        closeWriteoffListPopup();
+      });
+      writeoffListButton.addEventListener('click', function () {
+        openWriteoffListPopup();
+      });
+      writeoffDateInput.addEventListener('change', function () {
+        renderWriteoffListForDate(writeoffDateInput.value);
+      });
+
       overlay.addEventListener('click', function () {
         closePopup();
         closeWriteoffPopup();
+        closeWriteoffListPopup();
       });
 
       const sheetData = await fetchSheetData();
       const sheetValues = sheetData && sheetData.values ? sheetData.values : null;
       const productValues = sheetData && sheetData.products ? sheetData.products : null;
+      const writeOffValues = sheetData && sheetData.writeOffs ? sheetData.writeOffs : null;
 
       tableRows = buildTableFromValues(sheetValues);
       products = buildProductsFromValues(productValues);
+      writeOffs = buildWriteOffsFromValues(writeOffValues);
       statusMatrix = tableToStatusMatrix(tableRows);
       buildGridFromMatrix(statusMatrix);
       startObserver();
