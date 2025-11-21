@@ -24,6 +24,7 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       display: flex;
       align-items: center;
+      z-index: 1;
     }
 
     .logo svg {
@@ -35,6 +36,8 @@
       flex: 1;
       padding: 15px;
       box-sizing: border-box;
+      position: relative;
+      z-index: 0;
     }
 
     .grid {
@@ -53,7 +56,14 @@
       border-radius: 10px;
       position: relative;
       background: #e0e0e0;
-      transition: background 150ms ease-out;
+      transition: background 150ms ease-out, box-shadow 150ms ease-out, transform 150ms ease-out;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .cell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
     }
 
     .cell.grey {
@@ -86,6 +96,147 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
+
+    .cell-meta {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.75rem;
+    }
+
+    .cell-product,
+    .cell-amount,
+    .cell-time {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 6px;
+      padding: 2px 6px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #111111;
+    }
+
+    .cell-product {
+      font-weight: 600;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      z-index: 10;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .popup {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 11;
+    }
+
+    .popup.active {
+      display: flex;
+    }
+
+    .popup-panel {
+      background: #ffffff;
+      border-radius: 14px;
+      max-width: 960px;
+      width: 90%;
+      max-height: 80vh;
+      padding: 16px 20px 20px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .popup-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .popup-close {
+      font-size: 1.2rem;
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .popup-close:hover {
+      background: #f0f0f0;
+    }
+
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      overflow-y: auto;
+      padding-top: 4px;
+    }
+
+    .product-cell {
+      flex: 0 0 calc((100% - 5 * 10px) / 6);
+      box-sizing: border-box;
+      border-radius: 10px;
+      border: 1px solid #dddddd;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #fafafa;
+      font-size: 0.75rem;
+    }
+
+    .product-text {
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .product-amount-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #cccccc;
+      font-size: 0.8rem;
+    }
+
+    .product-ok {
+      align-self: flex-end;
+      margin-top: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #007bff;
+      color: #ffffff;
+      font-size: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .product-ok:hover {
+      background: #005fcc;
+    }
   </style>
 </head>
 <body>
@@ -109,6 +260,18 @@
     <div id="grid" class="grid"></div>
   </main>
 
+  <div id="overlay" class="overlay"></div>
+
+  <div id="popup" class="popup">
+    <div class="popup-panel">
+      <div class="popup-header">
+        <div class="popup-title">Select product</div>
+        <div id="popup-close" class="popup-close">×</div>
+      </div>
+      <div id="product-grid" class="product-grid"></div>
+    </div>
+  </div>
+
   <script>
     const COLS = 6;
     const ROWS = 5;
@@ -118,10 +281,19 @@
 
     const grid = document.getElementById('grid');
     const baseCharCode = 'A'.charCodeAt(0);
+    const overlay = document.getElementById('overlay');
+    const popup = document.getElementById('popup');
+    const popupClose = document.getElementById('popup-close');
+    const productGrid = document.getElementById('product-grid');
+
     let tableRows = [];
     let statusMatrix = [];
+    let products = [];
     let syncTimeoutId = null;
     let observer = null;
+    let activeCell = null;
+    let activeCellTableIndex = null;
+    let elapsedTimerId = null;
 
     function indexFromRowCol(r, c) {
       return (r - 1) * COLS + (c - 1);
@@ -183,6 +355,44 @@
       return matrix;
     }
 
+    function buildProductsFromValues(rows) {
+      const list = [];
+      if (!rows) {
+        return list;
+      }
+      for (let i = 0; i < rows.length; i += 1) {
+        const row = rows[i] || [];
+        const id = row[0];
+        const title = row[1];
+        if (!id || !title) {
+          continue;
+        }
+        list.push({
+          id: String(id).trim(),
+          title: String(title).trim()
+        });
+      }
+      return list;
+    }
+
+    function computeElapsedLabel(startEpoch) {
+      const base = Number(startEpoch);
+      if (!base || base <= 0) {
+        return '';
+      }
+      const diffMs = Date.now() - base;
+      if (diffMs <= 0) {
+        return '0 min';
+      }
+      const minutes = Math.floor(diffMs / 60000);
+      if (minutes < 60) {
+        return String(minutes) + ' min';
+      }
+      const hours = Math.floor(minutes / 60);
+      const rem = minutes % 60;
+      return String(hours) + 'h ' + String(rem) + 'm';
+    }
+
     function buildGridFromMatrix(matrix) {
       grid.innerHTML = '';
       for (let r = 1; r <= ROWS; r += 1) {
@@ -199,12 +409,57 @@
             cell.classList.add(color);
           }
 
+          const tableIndex = indexFromRowCol(r, c) + 1;
+          const tRow = tableRows[tableIndex] || [];
+          const productId = tRow[2] ? String(tRow[2]) : '';
+          const amount = tRow[3] ? String(tRow[3]) : '';
+          const startEpochStr = tRow[4] ? String(tRow[4]) : '';
+          const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
+
+          if (productId) {
+            cell.classList.add(productId);
+          }
+          if (amount) {
+            cell.classList.add('amount_' + amount);
+          }
+          if (startEpoch !== null) {
+            cell.classList.add('start_time_' + startEpochStr);
+            cell.dataset.startEpoch = startEpochStr;
+          }
+
           const location = document.createElement('div');
           location.classList.add('location');
           const colLetter = String.fromCharCode(baseCharCode + c - 1);
           location.textContent = colLetter + r;
 
+          const meta = document.createElement('div');
+          meta.classList.add('cell-meta');
+
+          const productDiv = document.createElement('div');
+          productDiv.classList.add('cell-product');
+          productDiv.textContent = productId ? productId : '';
+
+          const amountDiv = document.createElement('div');
+          amountDiv.classList.add('cell-amount');
+          amountDiv.textContent = amount ? amount : '';
+
+          const timeDiv = document.createElement('div');
+          timeDiv.classList.add('cell-time');
+          if (startEpoch !== null) {
+            timeDiv.textContent = computeElapsedLabel(startEpochStr);
+          } else {
+            timeDiv.textContent = '';
+          }
+
+          meta.appendChild(productDiv);
+          meta.appendChild(amountDiv);
+          meta.appendChild(timeDiv);
+
           cell.appendChild(location);
+          cell.appendChild(meta);
+
+          cell.addEventListener('click', handleCellClick);
+
           grid.appendChild(cell);
         }
       }
@@ -272,7 +527,7 @@
       });
     }
 
-    async function fetchSheetValues() {
+    async function fetchSheetData() {
       try {
         const response = await fetch(SCRIPT_URL, {
           method: 'GET'
@@ -281,10 +536,7 @@
           return null;
         }
         const data = await response.json();
-        if (data && data.values) {
-          return data.values;
-        }
-        return null;
+        return data;
       } catch (e) {
         return null;
       }
@@ -305,13 +557,177 @@
       }
     }
 
+    function openPopupForCell(cell) {
+      activeCell = cell;
+      const rowIndex = parseInt(cell.dataset.row, 10);
+      const colIndex = parseInt(cell.dataset.col, 10);
+      activeCellTableIndex = indexFromRowCol(rowIndex, colIndex) + 1;
+
+      productGrid.innerHTML = '';
+      for (let i = 0; i < products.length; i += 1) {
+        const p = products[i];
+        const pCell = document.createElement('div');
+        pCell.classList.add('product-cell');
+        pCell.dataset.productId = p.id;
+
+        const text = document.createElement('div');
+        text.classList.add('product-text');
+        text.textContent = p.id + ' - ' + p.title;
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '0';
+        input.value = '';
+        input.classList.add('product-amount-input');
+        input.inputMode = 'numeric';
+
+        const ok = document.createElement('div');
+        ok.classList.add('product-ok');
+        ok.textContent = 'ok';
+
+        ok.addEventListener('click', function () {
+          handleProductSelection(pCell);
+        });
+
+        pCell.appendChild(text);
+        pCell.appendChild(input);
+        pCell.appendChild(ok);
+        productGrid.appendChild(pCell);
+      }
+
+      overlay.classList.add('active');
+      popup.classList.add('active');
+    }
+
+    function closePopup() {
+      overlay.classList.remove('active');
+      popup.classList.remove('active');
+      productGrid.innerHTML = '';
+      activeCell = null;
+      activeCellTableIndex = null;
+    }
+
+    function updateCellForSelection(cell, tableIndex, productId, amount, startEpochStr) {
+      if (!tableRows[tableIndex]) {
+        return;
+      }
+
+      tableRows[tableIndex][2] = productId;
+      tableRows[tableIndex][3] = String(amount);
+      tableRows[tableIndex][4] = startEpochStr;
+
+      const existing = [];
+      for (let i = 0; i < cell.classList.length; i += 1) {
+        existing.push(cell.classList.item(i));
+      }
+
+      for (let i = 0; i < products.length; i += 1) {
+        cell.classList.remove(products[i].id);
+      }
+
+      for (let i = 0; i < existing.length; i += 1) {
+        const cls = existing[i];
+        if (cls.indexOf('amount_') === 0 || cls.indexOf('start_time_') === 0) {
+          cell.classList.remove(cls);
+        }
+      }
+
+      if (productId) {
+        cell.classList.add(productId);
+      }
+      cell.classList.add('amount_' + String(amount));
+      cell.classList.add('start_time_' + startEpochStr);
+      cell.dataset.startEpoch = startEpochStr;
+
+      const meta = cell.querySelector('.cell-meta');
+      if (meta) {
+        const productDiv = meta.querySelector('.cell-product');
+        const amountDiv = meta.querySelector('.cell-amount');
+        const timeDiv = meta.querySelector('.cell-time');
+        if (productDiv) {
+          productDiv.textContent = productId ? productId : '';
+        }
+        if (amountDiv) {
+          amountDiv.textContent = amount ? String(amount) : '';
+        }
+        if (timeDiv) {
+          timeDiv.textContent = '0 min';
+        }
+      }
+    }
+
+    function handleProductSelection(productCell) {
+      if (!activeCell || activeCellTableIndex === null) {
+        closePopup();
+        return;
+      }
+      const productId = productCell.dataset.productId;
+      const input = productCell.querySelector('.product-amount-input');
+      const raw = input ? input.value : '';
+      let amount = parseInt(raw, 10);
+      if (!amount || amount < 0) {
+        amount = 0;
+      }
+      const now = Date.now();
+      const startEpochStr = String(now);
+
+      updateCellForSelection(activeCell, activeCellTableIndex, productId, amount, startEpochStr);
+      scheduleSync();
+      closePopup();
+      updateElapsedTimes();
+    }
+
+    function handleCellClick(event) {
+      const cell = event.currentTarget;
+      if (!cell.classList.contains('grey')) {
+        return;
+      }
+      if (!products || products.length === 0) {
+        return;
+      }
+      openPopupForCell(cell);
+    }
+
+    function updateElapsedTimes() {
+      const cells = grid.querySelectorAll('.cell');
+      for (let i = 0; i < cells.length; i += 1) {
+        const cell = cells[i];
+        const startEpochStr = cell.dataset.startEpoch;
+        if (!startEpochStr) {
+          continue;
+        }
+        const meta = cell.querySelector('.cell-meta');
+        if (!meta) {
+          continue;
+        }
+        const timeDiv = meta.querySelector('.cell-time');
+        if (!timeDiv) {
+          continue;
+        }
+        timeDiv.textContent = computeElapsedLabel(startEpochStr);
+      }
+    }
+
     async function init() {
-      const sheetValues = await fetchSheetValues();
+      popupClose.addEventListener('click', function () {
+        closePopup();
+      });
+      overlay.addEventListener('click', function () {
+        closePopup();
+      });
+
+      const sheetData = await fetchSheetData();
+      const sheetValues = sheetData && sheetData.values ? sheetData.values : null;
+      const productValues = sheetData && sheetData.products ? sheetData.products : null;
+
       tableRows = buildTableFromValues(sheetValues);
+      products = buildProductsFromValues(productValues);
       statusMatrix = tableToStatusMatrix(tableRows);
       buildGridFromMatrix(statusMatrix);
       startObserver();
       sendStatusToSheet();
+      updateElapsedTimes();
+      elapsedTimerId = setInterval(updateElapsedTimes, 60000);
     }
 
     init();
