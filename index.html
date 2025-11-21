@@ -236,32 +236,6 @@
       });
     }
 
-    function allCellsAre(value, matrix) {
-      for (let r = 0; r < ROWS; r += 1) {
-        for (let c = 0; c < COLS; c += 1) {
-          if (matrix[r][c] !== value) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-
-    function setCellColor(row, col, color) {
-      if (COLOR_CLASSES.indexOf(color) === -1) {
-        return;
-      }
-      const selector = '.cell[data-row="' + row + '"][data-col="' + col + '"]';
-      const cell = grid.querySelector(selector);
-      if (!cell) {
-        return;
-      }
-      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
-        cell.classList.remove(COLOR_CLASSES[i]);
-      }
-      cell.classList.add(color);
-    }
-
     async function fetchSheetValues() {
       try {
         const response = await fetch(SCRIPT_URL, {
@@ -304,12 +278,11 @@
         statusMatrix = createEmptyMatrix(ROWS, COLS, 'grey');
       }
 
+      statusMatrix[3][5] = 'green';
+
       buildGridFromMatrix(statusMatrix);
       startObserver();
-
-      if (allCellsAre('grey', statusMatrix)) {
-        setCellColor(4, 6, 'green');
-      }
+      sendStatusToSheet();
     }
 
     init();
