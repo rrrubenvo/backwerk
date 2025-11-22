@@ -223,6 +223,9 @@
     .writeoff-list-panel {
       max-width: 720px;
       width: min(95%, 720px);
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
     }
 
     #writeoff-content {
@@ -231,6 +234,10 @@
 
     #writeoff-list-content {
       font-size: 0.85rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .writeoff-list-filters {
@@ -246,6 +253,11 @@
       border-radius: 6px;
       border: 1px solid #cccccc;
       font-size: 0.85rem;
+    }
+
+    #writeoff-list-table-wrapper {
+      flex: 1;
+      overflow-y: auto;
     }
 
     .writeoff-table {
@@ -1370,6 +1382,16 @@
       }
     }
 
+    async function refreshWriteOffsFromSheet() {
+      const sheetData = await fetchSheetData();
+      if (!sheetData || !sheetData.writeOffs) {
+        writeOffs = [];
+        return;
+      }
+      const writeOffValues = sheetData.writeOffs;
+      writeOffs = buildWriteOffsFromValues(writeOffValues);
+    }
+
     async function init() {
       popupClose.addEventListener('click', function () {
         closePopup();
@@ -1380,7 +1402,8 @@
       writeoffListClose.addEventListener('click', function () {
         closeWriteoffListPopup();
       });
-      writeoffListButton.addEventListener('click', function () {
+      writeoffListButton.addEventListener('click', async function () {
+        await refreshWriteOffsFromSheet();
         openWriteoffListPopup();
       });
       writeoffDateInput.addEventListener('change', function () {
