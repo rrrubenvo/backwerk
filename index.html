@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Flex Grid 6 x 5 with Header111</title>
+  <title>Flex Grid 6 x 5 with Header222</title>
   <style>
     html, body {
       height: 100%;
@@ -1275,8 +1275,18 @@
       if (!sheetDateStr) {
         return '';
       }
-      const s = String(sheetDateStr).trim();
-      const parts = s.split('-');
+      if (sheetDateStr.indexOf('GMT') !== -1) {
+        const d = new Date(sheetDateStr);
+        if (!isNaN(d.getTime())) {
+          const year = d.getFullYear();
+          const month = d.getMonth() + 1;
+          const day = d.getDate();
+          const mm = month < 10 ? '0' + month : String(month);
+          const dd = day < 10 ? '0' + day : String(day);
+          return year + '-' + mm + '-' + dd;
+        }
+      }
+      const parts = sheetDateStr.split('-');
       if (parts.length !== 3) {
         return '';
       }
