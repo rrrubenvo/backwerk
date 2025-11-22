@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Flex Grid 6 x 5 with Header444</title>
+  <title>Flex Grid 6 x 5 with Header555</title>
   <style>
     html, body {
       height: 100%;
@@ -583,16 +583,21 @@
       return list;
     }
 
-    function computeElapsedLabel(startEpoch) {
+    function computeElapsedMinutes(startEpoch) {
       const base = Number(startEpoch);
       if (!base || base <= 0) {
-        return '0 min';
+        return 0;
       }
       const diffMs = Date.now() - base;
       if (diffMs <= 0) {
-        return '0 min';
+        return 0;
       }
       const minutes = Math.floor(diffMs / 60000);
+      return minutes;
+    }
+
+    function computeElapsedLabel(startEpoch) {
+      const minutes = computeElapsedMinutes(startEpoch);
       return String(minutes) + ' min';
     }
 
@@ -1246,7 +1251,24 @@
         if (!timeDiv) {
           continue;
         }
-        timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
+
+        const minutes = computeElapsedMinutes(startEpochStr);
+        timeDiv.textContent = 'tijd op locatie: ' + String(minutes) + ' min';
+
+        let newColor = 'green';
+        if (minutes > 105 && minutes < 120) {
+          newColor = 'orange';
+        } else if (minutes >= 120) {
+          newColor = 'red';
+        }
+
+        const currentColor = getCellColorClass(cell);
+        if (currentColor !== newColor) {
+          for (let j = 0; j < COLOR_CLASSES.length; j += 1) {
+            cell.classList.remove(COLOR_CLASSES[j]);
+          }
+          cell.classList.add(newColor);
+        }
       }
     }
 
@@ -1372,13 +1394,22 @@
         closeWriteoffListPopup();
       });
 
-      writeoffListButton.addEventListener('click', async function () {
-        await refreshWriteOffsFromSheet();
+      writeoffListButton.addEventListener('click', function () {
         const todayStr = getTodayDateString();
         writeoffDateInput.value = todayStr;
-        renderWriteoffListForDate(todayStr);
+
+        writeoffListTableWrapper.innerHTML = '';
+        const loading = document.createElement('div');
+        loading.classList.add('writeoff-empty');
+        loading.textContent = 'Laden...';
+        writeoffListTableWrapper.appendChild(loading);
+
         overlay.classList.add('active');
         writeoffListPopup.classList.add('active');
+
+        refreshWriteOffsFromSheet().then(function () {
+          renderWriteoffListForDate(writeoffDateInput.value);
+        });
       });
 
       writeoffDateInput.addEventListener('change', function () {
