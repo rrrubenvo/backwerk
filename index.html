@@ -1275,18 +1275,8 @@
       if (!sheetDateStr) {
         return '';
       }
-      if (sheetDateStr.indexOf('GMT') !== -1) {
-        const d = new Date(sheetDateStr);
-        if (!isNaN(d.getTime())) {
-          const year = d.getFullYear();
-          const month = d.getMonth() + 1;
-          const day = d.getDate();
-          const mm = month < 10 ? '0' + month : String(month);
-          const dd = day < 10 ? '0' + day : String(day);
-          return year + '-' + mm + '-' + dd;
-        }
-      }
-      const parts = sheetDateStr.split('-');
+      const s = String(sheetDateStr).trim();
+      const parts = s.split('-');
       if (parts.length !== 3) {
         return '';
       }
