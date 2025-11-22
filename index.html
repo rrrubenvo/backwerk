@@ -443,13 +443,13 @@
   <script>
     const COLS = 6;
     const ROWS = 5;
-    const TOTAL_CELLS = ROWS * COLS;
     const COLOR_CLASSES = ['grey', 'green', 'orange', 'red'];
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGVZusGYvG-9b3mLz7UxSZJooAUa4Tdypofp_XUl6bLsmKurfmE6ZwHH9RfErxBRncog/exec';
 
     const grid = document.getElementById('grid');
     const baseCharCode = 'A'.charCodeAt(0);
     const overlay = document.getElementById('overlay');
+
     const popup = document.getElementById('popup');
     const popupClose = document.getElementById('popup-close');
     const productGrid = document.getElementById('product-grid');
@@ -467,11 +467,9 @@
     const writeoffListTableWrapper = document.getElementById('writeoff-list-table-wrapper');
 
     let tableRows = [];
-    let statusMatrix = [];
     let products = [];
     let writeOffs = [];
     let syncTimeoutId = null;
-    let observer = null;
     let activeCell = null;
     let activeCellTableIndex = null;
     let elapsedTimerId = null;
@@ -479,18 +477,6 @@
 
     function indexFromRowCol(r, c) {
       return (r - 1) * COLS + (c - 1);
-    }
-
-    function createEmptyMatrix(rows, cols, value) {
-      const matrix = [];
-      for (let r = 0; r < rows; r += 1) {
-        const row = [];
-        for (let c = 0; c < cols; c += 1) {
-          row.push(value);
-        }
-        matrix.push(row);
-      }
-      return matrix;
     }
 
     function buildTableFromValues(values) {
@@ -522,19 +508,6 @@
         }
       }
       return rows;
-    }
-
-    function tableToStatusMatrix(rows) {
-      const matrix = createEmptyMatrix(ROWS, COLS, 'grey');
-      for (let r = 1; r <= ROWS; r += 1) {
-        for (let c = 1; c <= COLS; c += 1) {
-          const idx = indexFromRowCol(r, c) + 1;
-          const row = rows[idx];
-          const color = row && row[1] ? row[1] : 'grey';
-          matrix[r - 1][c - 1] = COLOR_CLASSES.indexOf(color) === -1 ? 'grey' : color;
-        }
-      }
-      return matrix;
     }
 
     function buildProductsFromValues(rows) {
@@ -618,7 +591,7 @@
       return idStr;
     }
 
-    function buildGridFromMatrix(matrix) {
+    function buildGridFromTable() {
       grid.innerHTML = '';
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
@@ -627,15 +600,12 @@
           cell.dataset.row = String(r);
           cell.dataset.col = String(c);
 
-          const color = matrix[r - 1][c - 1];
-          if (COLOR_CLASSES.indexOf(color) === -1) {
-            cell.classList.add('grey');
-          } else {
-            cell.classList.add(color);
-          }
-
           const tableIndex = indexFromRowCol(r, c) + 1;
           const tRow = tableRows[tableIndex] || [];
+          const color = tRow[1] || 'grey';
+          const safeColor = COLOR_CLASSES.indexOf(color) === -1 ? 'grey' : color;
+          cell.classList.add(safeColor);
+
           const productId = tRow[2] ? String(tRow[2]) : '';
           const amount = tRow[3] ? String(tRow[3]) : '';
           const startEpochStr = tRow[4] ? String(tRow[4]) : '';
@@ -704,16 +674,6 @@
       }
     }
 
-    function getCellColorClass(element) {
-      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
-        const cls = COLOR_CLASSES[i];
-        if (element.classList.contains(cls)) {
-          return cls;
-        }
-      }
-      return 'grey';
-    }
-
     function scheduleSync() {
       if (syncTimeoutId !== null) {
         clearTimeout(syncTimeoutId);
@@ -722,48 +682,6 @@
         syncTimeoutId = null;
         sendStatusToSheet();
       }, 500);
-    }
-
-    function startObserver() {
-      observer = new MutationObserver(function (mutations) {
-        let changed = false;
-        for (let i = 0; i < mutations.length; i += 1) {
-          const mutation = mutations[i];
-          if (mutation.type !== 'attributes') {
-            continue;
-          }
-          if (mutation.attributeName !== 'class') {
-            continue;
-          }
-          const element = mutation.target;
-          if (!element.dataset || !element.dataset.row || !element.dataset.col) {
-            continue;
-          }
-          const rowIndex = parseInt(element.dataset.row, 10) - 1;
-          const colIndex = parseInt(element.dataset.col, 10) - 1;
-          if (rowIndex < 0 || colIndex < 0) {
-            continue;
-          }
-          const color = getCellColorClass(element);
-          if (statusMatrix[rowIndex][colIndex] !== color) {
-            statusMatrix[rowIndex][colIndex] = color;
-            const idx = indexFromRowCol(rowIndex + 1, colIndex + 1) + 1;
-            if (tableRows[idx]) {
-              tableRows[idx][1] = color;
-            }
-            changed = true;
-          }
-        }
-        if (changed) {
-          scheduleSync();
-        }
-      });
-
-      observer.observe(grid, {
-        attributes: true,
-        attributeFilter: ['class'],
-        subtree: true
-      });
     }
 
     async function fetchSheetData() {
@@ -878,8 +796,8 @@
       popupTitleLocation.textContent = '';
       activeCell = null;
       activeCellTableIndex = null;
-      const otherOpen = writeoffPopup.classList.contains('active') || writeoffListPopup.classList.contains('active');
-      if (!otherOpen) {
+      if (!writeoffPopup.classList.contains('active') &&
+          !writeoffListPopup.classList.contains('active')) {
         overlay.classList.remove('active');
       }
     }
@@ -1063,8 +981,8 @@
       writeoffPopup.classList.remove('active');
       writeoffContent.innerHTML = '';
       writeoffCell = null;
-      const otherOpen = popup.classList.contains('active') || writeoffListPopup.classList.contains('active');
-      if (!otherOpen) {
+      if (!popup.classList.contains('active') &&
+          !writeoffListPopup.classList.contains('active')) {
         overlay.classList.remove('active');
       }
     }
@@ -1124,12 +1042,6 @@
         }
       }
 
-      const rowIndex = row - 1;
-      const colIndex = col - 1;
-      if (rowIndex >= 0 && colIndex >= 0 && rowIndex < ROWS && colIndex < COLS) {
-        statusMatrix[rowIndex][colIndex] = 'grey';
-      }
-
       scheduleSync();
     }
 
@@ -1172,6 +1084,7 @@
         return;
       }
 
+      tableRows[tableIndex][1] = 'green';
       tableRows[tableIndex][2] = productId;
       tableRows[tableIndex][3] = String(amount);
       tableRows[tableIndex][4] = startEpochStr;
@@ -1366,22 +1279,6 @@
       writeoffListTableWrapper.appendChild(table);
     }
 
-    function openWriteoffListPopup() {
-      const todayStr = getTodayDateString();
-      writeoffDateInput.value = todayStr;
-      renderWriteoffListForDate(todayStr);
-      overlay.classList.add('active');
-      writeoffListPopup.classList.add('active');
-    }
-
-    function closeWriteoffListPopup() {
-      writeoffListPopup.classList.remove('active');
-      const otherOpen = popup.classList.contains('active') || writeoffPopup.classList.contains('active');
-      if (!otherOpen) {
-        overlay.classList.remove('active');
-      }
-    }
-
     async function refreshWriteOffsFromSheet() {
       const sheetData = await fetchSheetData();
       if (!sheetData || !sheetData.writeOffs) {
@@ -1390,6 +1287,14 @@
       }
       const writeOffValues = sheetData.writeOffs;
       writeOffs = buildWriteOffsFromValues(writeOffValues);
+    }
+
+    function closeWriteoffListPopup() {
+      writeoffListPopup.classList.remove('active');
+      if (!popup.classList.contains('active') &&
+          !writeoffPopup.classList.contains('active')) {
+        overlay.classList.remove('active');
+      }
     }
 
     async function init() {
@@ -1402,10 +1307,16 @@
       writeoffListClose.addEventListener('click', function () {
         closeWriteoffListPopup();
       });
+
       writeoffListButton.addEventListener('click', async function () {
         await refreshWriteOffsFromSheet();
-        openWriteoffListPopup();
+        const todayStr = getTodayDateString();
+        writeoffDateInput.value = todayStr;
+        renderWriteoffListForDate(todayStr);
+        overlay.classList.add('active');
+        writeoffListPopup.classList.add('active');
       });
+
       writeoffDateInput.addEventListener('change', function () {
         renderWriteoffListForDate(writeoffDateInput.value);
       });
@@ -1424,9 +1335,8 @@
       tableRows = buildTableFromValues(sheetValues);
       products = buildProductsFromValues(productValues);
       writeOffs = buildWriteOffsFromValues(writeOffValues);
-      statusMatrix = tableToStatusMatrix(tableRows);
-      buildGridFromMatrix(statusMatrix);
-      startObserver();
+
+      buildGridFromTable();
       sendStatusToSheet();
       updateElapsedTimes();
       elapsedTimerId = setInterval(updateElapsedTimes, 60000);
