@@ -565,7 +565,25 @@
       return idStr;
     }
 
+    function getDisplayCols() {
+      const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth || 0;
+      let cols = Math.floor(width / 300);
+      if (cols < 1) {
+        cols = 1;
+      }
+      return cols;
+    }
+
+    function getDisplayRows(cols) {
+      const total = TOTAL_CELLS;
+      const rows = Math.ceil(total / cols);
+      return rows < 1 ? 1 : rows;
+    }
+
     function buildGridFromMatrix(matrix) {
+      const displayCols = getDisplayCols();
+      const displayRows = getDisplayRows(displayCols);
+
       grid.innerHTML = '';
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
@@ -573,6 +591,9 @@
           cell.classList.add('cell', 'row-' + r, 'col-' + c);
           cell.dataset.row = String(r);
           cell.dataset.col = String(c);
+
+          cell.style.flex = '0 0 calc((100% - ' + (displayCols - 1) + ' * 15px) / ' + displayCols + ')';
+          cell.style.height = 'calc((100% - ' + (displayRows - 1) + ' * 15px) / ' + displayRows + ')';
 
           const color = matrix[r - 1][c - 1];
           if (COLOR_CLASSES.indexOf(color) === -1) {
@@ -1334,6 +1355,10 @@
       sendStatusToSheet();
       updateElapsedTimes();
       elapsedTimerId = setInterval(updateElapsedTimes, 60000);
+
+      window.addEventListener('resize', function () {
+        buildGridFromMatrix(statusMatrix);
+      });
     }
 
     init();
