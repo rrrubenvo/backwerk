@@ -78,7 +78,7 @@
       position: relative;
       background: #e0e0e0;
       transition: background 150ms ease-out, box-shadow 150ms ease-out, transform 150ms ease-out;
-      cursor: pointer;
+      cursor: default;
       overflow: hidden;
     }
 
@@ -133,10 +133,6 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
     }
 
-    .cell.grey .cell-meta {
-      display: none;
-    }
-
     .cell-product,
     .cell-amount {
       max-width: 100%;
@@ -175,6 +171,37 @@
 
     .cell-clear:hover {
       background: rgba(0, 0, 0, 0.06);
+    }
+
+    .cell-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .cell-stock-input {
+      flex: 1;
+      box-sizing: border-box;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #cccccc;
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+    .cell-add-button {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #000000;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 0.75rem;
+      user-select: none;
+    }
+
+    .cell-add-button:hover {
+      background: #f0f0f0;
     }
 
     .overlay {
@@ -256,11 +283,6 @@
       flex-wrap: wrap;
     }
 
-    .popup-title-location {
-      font-weight: 600;
-      opacity: 0.8;
-    }
-
     .popup-close {
       font-size: 1.2rem;
       cursor: pointer;
@@ -271,66 +293,6 @@
 
     .popup-close:hover {
       background: #f0f0f0;
-    }
-
-    .product-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      overflow-y: auto;
-      padding-top: 4px;
-    }
-
-    .product-cell {
-      flex: 0 0 calc((100% - 5 * 10px) / 6);
-      box-sizing: border-box;
-      border-radius: 10px;
-      border: 1px solid #dddddd;
-      padding: 6px 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      background: #fafafa;
-      font-size: 0.75rem;
-    }
-
-    .product-text {
-      font-weight: 600;
-      line-height: 1.2;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      min-height: calc(1.2em * 2);
-      max-height: calc(1.2em * 2);
-    }
-
-    .product-amount-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid #cccccc;
-      font-size: 0.9rem;
-      text-align: center;
-    }
-
-    .product-ok {
-      align-self: flex-end;
-      margin-top: 4px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: #000000;
-      color: #ffffff;
-      font-size: 0.85rem;
-      cursor: pointer;
-      user-select: none;
-      transition: background 120ms ease-out, transform 120ms ease-out;
-    }
-
-    .product-ok:hover {
-      background: #333333;
-      transform: translateY(-1px);
     }
 
     .writeoff-list-filters {
@@ -399,19 +361,6 @@
 
   <div id="overlay" class="overlay"></div>
 
-  <div id="popup" class="popup">
-    <div class="popup-panel">
-      <div class="popup-header">
-        <div class="popup-title">
-          <span id="popup-title-main">Select product</span>
-          <span id="popup-title-location" class="popup-title-location"></span>
-        </div>
-        <div id="popup-close" class="popup-close">×</div>
-      </div>
-      <div id="product-grid" class="product-grid"></div>
-    </div>
-  </div>
-
   <div id="writeoff-popup" class="popup">
     <div class="popup-panel writeoff-panel">
       <div class="popup-header">
@@ -450,10 +399,6 @@
     const grid = document.getElementById('grid');
     const baseCharCode = 'A'.charCodeAt(0);
     const overlay = document.getElementById('overlay');
-    const popup = document.getElementById('popup');
-    const popupClose = document.getElementById('popup-close');
-    const productGrid = document.getElementById('product-grid');
-    const popupTitleLocation = document.getElementById('popup-title-location');
 
     const writeoffPopup = document.getElementById('writeoff-popup');
     const writeoffClose = document.getElementById('writeoff-close');
@@ -472,8 +417,6 @@
     let writeOffs = [];
     let syncTimeoutId = null;
     let observer = null;
-    let activeCell = null;
-    let activeCellTableIndex = null;
     let elapsedTimerId = null;
     let writeoffCell = null;
 
@@ -695,14 +638,38 @@
           timeRow.appendChild(timeDiv);
           timeRow.appendChild(clearDiv);
 
+          const controls = document.createElement('div');
+          controls.classList.add('cell-controls');
+
+          const stockInput = document.createElement('input');
+          stockInput.type = 'number';
+          stockInput.min = '1';
+          stockInput.step = '1';
+          stockInput.value = amount ? String(amount) : '1';
+          stockInput.classList.add('cell-stock-input');
+          stockInput.inputMode = 'numeric';
+          stockInput.pattern = '[0-9]*';
+
+          const addButton = document.createElement('button');
+          addButton.type = 'button';
+          addButton.classList.add('cell-add-button');
+          addButton.textContent = 'toevoegen';
+
+          addButton.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            handleAddStock(cell, stockInput);
+          });
+
+          controls.appendChild(stockInput);
+          controls.appendChild(addButton);
+
           meta.appendChild(productDiv);
           meta.appendChild(amountDiv);
           meta.appendChild(timeRow);
+          meta.appendChild(controls);
 
           cell.appendChild(location);
           cell.appendChild(meta);
-
-          cell.addEventListener('click', handleCellClick);
 
           grid.appendChild(cell);
         }
@@ -820,72 +787,6 @@
           body: JSON.stringify(payload)
         });
       } catch (e) {
-      }
-    }
-
-    function openPopupForCell(cell) {
-      activeCell = cell;
-      const rowIndex = parseInt(cell.dataset.row, 10);
-      const colIndex = parseInt(cell.dataset.col, 10);
-      activeCellTableIndex = indexFromRowCol(rowIndex, colIndex) + 1;
-
-      let locLabel = '';
-      const locEl = cell.querySelector('.location');
-      if (locEl) {
-        locLabel = locEl.textContent;
-      } else {
-        const colLetter = String.fromCharCode(baseCharCode + colIndex - 1);
-        locLabel = colLetter + rowIndex;
-      }
-      popupTitleLocation.textContent = '(' + locLabel + ')';
-
-      productGrid.innerHTML = '';
-      for (let i = 0; i < products.length; i += 1) {
-        const p = products[i];
-        const pCell = document.createElement('div');
-        pCell.classList.add('product-cell');
-        pCell.dataset.productId = p.id;
-
-        const text = document.createElement('div');
-        text.classList.add('product-text');
-        text.textContent = p.id + ' - ' + p.title;
-
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.min = '1';
-        input.step = '1';
-        input.value = '1';
-        input.classList.add('product-amount-input');
-        input.inputMode = 'numeric';
-        input.pattern = '[0-9]*';
-
-        const ok = document.createElement('div');
-        ok.classList.add('product-ok');
-        ok.textContent = 'ok';
-
-        ok.addEventListener('click', function () {
-          handleProductSelection(pCell);
-        });
-
-        pCell.appendChild(text);
-        pCell.appendChild(input);
-        pCell.appendChild(ok);
-        productGrid.appendChild(pCell);
-      }
-
-      overlay.classList.add('active');
-      popup.classList.add('active');
-    }
-
-    function closePopup() {
-      popup.classList.remove('active');
-      productGrid.innerHTML = '';
-      popupTitleLocation.textContent = '';
-      activeCell = null;
-      activeCellTableIndex = null;
-      const otherOpen = writeoffPopup.classList.contains('active') || writeoffListPopup.classList.contains('active');
-      if (!otherOpen) {
-        overlay.classList.remove('active');
       }
     }
 
@@ -1068,7 +969,7 @@
       writeoffPopup.classList.remove('active');
       writeoffContent.innerHTML = '';
       writeoffCell = null;
-      const otherOpen = popup.classList.contains('active') || writeoffListPopup.classList.contains('active');
+      const otherOpen = writeoffListPopup.classList.contains('active');
       if (!otherOpen) {
         overlay.classList.remove('active');
       }
@@ -1085,8 +986,9 @@
         return;
       }
 
+      const currentProductId = tableRows[tableIndex][2] ? String(tableRows[tableIndex][2]) : '';
+
       tableRows[tableIndex][1] = 'grey';
-      tableRows[tableIndex][2] = '';
       tableRows[tableIndex][3] = '';
       tableRows[tableIndex][4] = '';
 
@@ -1119,7 +1021,7 @@
         const amountDiv = meta.querySelector('.cell-amount');
         const timeDiv = meta.querySelector('.cell-time');
         if (productDiv) {
-          productDiv.textContent = '';
+          productDiv.textContent = currentProductId ? formatProductDisplay(currentProductId) : '';
         }
         if (amountDiv) {
           amountDiv.textContent = '';
@@ -1203,36 +1105,34 @@
       }
     }
 
-    function handleProductSelection(productCell) {
-      if (!activeCell || activeCellTableIndex === null) {
-        closePopup();
+    function handleAddStock(cell, inputElement) {
+      const row = parseInt(cell.dataset.row, 10);
+      const col = parseInt(cell.dataset.col, 10);
+      if (!row || !col) {
         return;
       }
-      const productId = productCell.dataset.productId;
-      const input = productCell.querySelector('.product-amount-input');
-      const raw = input ? input.value : '';
+      const tableIndex = indexFromRowCol(row, col) + 1;
+      const record = tableRows[tableIndex];
+      if (!record) {
+        return;
+      }
+      const productId = record[2] ? String(record[2]) : '';
+      if (!productId) {
+        return;
+      }
+
+      const raw = inputElement ? inputElement.value : '';
       let amount = parseInt(raw, 10);
       if (!amount || amount < 1) {
         amount = 1;
       }
+
       const now = Date.now();
       const startEpochStr = String(now);
 
-      updateCellForSelection(activeCell, activeCellTableIndex, productId, amount, startEpochStr);
+      updateCellForSelection(cell, tableIndex, productId, amount, startEpochStr);
       scheduleSync();
-      closePopup();
       updateElapsedTimes();
-    }
-
-    function handleCellClick(event) {
-      const cell = event.currentTarget;
-      if (!cell.classList.contains('grey')) {
-        return;
-      }
-      if (!products || products.length === 0) {
-        return;
-      }
-      openPopupForCell(cell);
     }
 
     function updateElapsedTimes() {
@@ -1377,16 +1277,13 @@
 
     function closeWriteoffListPopup() {
       writeoffListPopup.classList.remove('active');
-      const otherOpen = popup.classList.contains('active') || writeoffPopup.classList.contains('active');
+      const otherOpen = writeoffPopup.classList.contains('active');
       if (!otherOpen) {
         overlay.classList.remove('active');
       }
     }
 
     async function init() {
-      popupClose.addEventListener('click', function () {
-        closePopup();
-      });
       writeoffClose.addEventListener('click', function () {
         closeWriteoffPopup();
       });
@@ -1417,7 +1314,6 @@
       });
 
       overlay.addEventListener('click', function () {
-        closePopup();
         closeWriteoffPopup();
         closeWriteoffListPopup();
       });
