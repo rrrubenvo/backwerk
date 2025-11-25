@@ -114,8 +114,7 @@
       font-weight: 600;
       font-size: 0.8rem;
       color: #000000;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     .cell-meta {
@@ -584,7 +583,15 @@
 
           const tableIndex = indexFromRowCol(r, c) + 1;
           const tRow = tableRows[tableIndex] || [];
-          const productId = tRow[2] ? String(tRow[2]) : '';
+          let productId = tRow[2] ? String(tRow[2]) : '';
+          const cellIndex0 = indexFromRowCol(r, c);
+
+          if (!productId && products && products[cellIndex0]) {
+            productId = products[cellIndex0].id;
+            tRow[2] = productId;
+            tableRows[tableIndex] = tRow;
+          }
+
           const amount = tRow[3] ? String(tRow[3]) : '';
           const startEpochStr = tRow[4] ? String(tRow[4]) : '';
           const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
@@ -602,15 +609,15 @@
 
           const location = document.createElement('div');
           location.classList.add('location');
-          const colLetter = String.fromCharCode(baseCharCode + c - 1);
-          location.textContent = colLetter + r;
+          const productDisplay = productId ? formatProductDisplay(productId) : '';
+          location.textContent = productDisplay;
 
           const meta = document.createElement('div');
           meta.classList.add('cell-meta');
 
           const productDiv = document.createElement('div');
           productDiv.classList.add('cell-product');
-          productDiv.textContent = productId ? formatProductDisplay(productId) : '';
+          productDiv.textContent = productDisplay;
 
           const amountDiv = document.createElement('div');
           amountDiv.classList.add('cell-amount');
@@ -793,23 +800,14 @@
     function openWriteoffConfirm(cell) {
       writeoffCell = cell;
 
-      const rowIndex = parseInt(cell.dataset.row, 10);
-      const colIndex = parseInt(cell.dataset.col, 10);
-
-      let locLabel = '';
       const locEl = cell.querySelector('.location');
-      if (locEl) {
-        locLabel = locEl.textContent;
-      } else {
-        const colLetter = String.fromCharCode(baseCharCode + colIndex - 1);
-        locLabel = colLetter + rowIndex;
-      }
+      const locLabel = locEl ? locEl.textContent : '';
 
       writeoffTitle.textContent = 'Product afschrijven?';
       writeoffContent.innerHTML = '';
 
       const msg = document.createElement('div');
-      msg.textContent = 'Locatie ' + locLabel;
+      msg.textContent = 'Product ' + locLabel;
 
       const buttons = document.createElement('div');
       buttons.style.display = 'flex';
@@ -871,8 +869,6 @@
         return;
       }
 
-      const locEl = writeoffCell.querySelector('.location');
-      const locLabel = locEl ? locEl.textContent : (String.fromCharCode(baseCharCode + colIndex - 1) + rowIndex);
       const productId = record[2] ? String(record[2]) : '';
       const amountStr = record[3] ? String(record[3]) : '';
       let maxAmount = parseInt(amountStr, 10);
@@ -887,7 +883,7 @@
       writeoffContent.innerHTML = '';
 
       const info = document.createElement('div');
-      info.innerHTML = 'Locatie <strong>' + locLabel + '</strong><br>Product <strong>' + productDisplay + '</strong>';
+      info.innerHTML = 'Product <strong>' + productDisplay + '</strong>';
 
       const amountWrap = document.createElement('div');
       amountWrap.style.marginTop = '10px';
@@ -1093,14 +1089,20 @@
         const productDiv = meta.querySelector('.cell-product');
         const amountDiv = meta.querySelector('.cell-amount');
         const timeDiv = meta.querySelector('.cell-time');
+        const productDisplay = productId ? formatProductDisplay(productId) : '';
         if (productDiv) {
-          productDiv.textContent = productId ? formatProductDisplay(productId) : '';
+          productDiv.textContent = productDisplay;
         }
         if (amountDiv) {
           amountDiv.textContent = amount ? 'aantal: ' + String(amount) : '';
         }
         if (timeDiv) {
           timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
+        }
+
+        const header = cell.querySelector('.location');
+        if (header) {
+          header.textContent = productDisplay;
         }
       }
     }
