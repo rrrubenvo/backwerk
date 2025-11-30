@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Back-werk stock system v0.800</title>
+  <title>Back-werk stock system</title>
   <style>
     html, body {
       height: 100%;
@@ -59,7 +59,6 @@
       box-sizing: border-box;
       position: relative;
       z-index: 0;
-      overflow-y: auto;
     }
 
     .grid {
@@ -67,18 +66,14 @@
       flex-wrap: wrap;
       gap: 15px;
       width: 100%;
+      height: 100%;
       box-sizing: border-box;
-      --cols: 6;
-    }
-
-    #grid {
-      display: block;
-      height: auto;
     }
 
     .cell {
       box-sizing: border-box;
-      flex: 0 0 calc((100% - (var(--cols) - 1) * 15px) / var(--cols));
+      flex: 0 0 calc((100% - 5 * 15px) / 6);
+      height: calc((100% - 4 * 15px) / 5);
       border-radius: 10px;
       position: relative;
       background: #e0e0e0;
@@ -337,16 +332,6 @@
       text-align: center;
       margin-top: 6px;
     }
-
-    .category-section {
-      margin-bottom: 24px;
-    }
-
-    .category-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin: 0 0 8px;
-    }
   </style>
 </head>
 <body>
@@ -503,14 +488,12 @@
         const row = rows[i] || [];
         const id = row[0];
         const title = row[1];
-        const category = row[2];
         if (!id || !title) {
           continue;
         }
         list.push({
           id: String(id).trim(),
-          title: String(title).trim(),
-          category: category ? String(category).trim() : ''
+          title: String(title).trim()
         });
       }
       return list;
@@ -570,16 +553,6 @@
       return '';
     }
 
-    function getProductCategoryById(productId) {
-      const idStr = String(productId);
-      for (let i = 0; i < products.length; i += 1) {
-        if (products[i].id === idStr) {
-          return products[i].category || '';
-        }
-      }
-      return '';
-    }
-
     function formatProductDisplay(productId) {
       if (!productId) {
         return '';
@@ -607,181 +580,127 @@
       return rows < 1 ? 1 : rows;
     }
 
-    function createCellElement(row, col, matrix) {
-      const cell = document.createElement('div');
-      cell.classList.add('cell', 'row-' + row, 'col-' + col);
-      cell.dataset.row = String(row);
-      cell.dataset.col = String(col);
-
-      const color = matrix[row - 1][col - 1];
-      if (COLOR_CLASSES.indexOf(color) === -1) {
-        cell.classList.add('grey');
-      } else {
-        cell.classList.add(color);
-      }
-
-      const tableIndex = indexFromRowCol(row, col) + 1;
-      const tRow = tableRows[tableIndex] || [];
-      const cellIndex0 = indexFromRowCol(row, col);
-
-      let productId = tRow[2] ? String(tRow[2]) : '';
-      if (!productId && products && products[cellIndex0]) {
-        productId = products[cellIndex0].id;
-        tRow[2] = productId;
-        tableRows[tableIndex] = tRow;
-      }
-
-      const amount = tRow[3] ? String(tRow[3]) : '';
-      const startEpochStr = tRow[4] ? String(tRow[4]) : '';
-      const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
-
-      if (productId) {
-        cell.classList.add(productId);
-      }
-      if (amount) {
-        cell.classList.add('amount_' + amount);
-      }
-      if (startEpoch !== null) {
-        cell.classList.add('start_time_' + startEpochStr);
-        cell.dataset.startEpoch = startEpochStr;
-      }
-
-      const location = document.createElement('div');
-      location.classList.add('location');
-      const productDisplay = productId ? formatProductDisplay(productId) : '';
-      location.textContent = productDisplay;
-
-      const meta = document.createElement('div');
-      meta.classList.add('cell-meta');
-
-      const productDiv = document.createElement('div');
-      productDiv.classList.add('cell-product');
-      productDiv.textContent = productDisplay;
-
-      const amountDiv = document.createElement('div');
-      amountDiv.classList.add('cell-amount');
-      amountDiv.textContent = amount ? 'aantal: ' + amount : '';
-
-      const timeRow = document.createElement('div');
-      timeRow.classList.add('cell-time-row');
-
-      const timeDiv = document.createElement('div');
-      timeDiv.classList.add('cell-time');
-      if (startEpoch !== null) {
-        timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
-      } else {
-        timeDiv.textContent = '';
-      }
-
-      const clearDiv = document.createElement('div');
-      clearDiv.classList.add('cell-clear');
-      clearDiv.textContent = '🗑';
-      clearDiv.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        openWriteoffConfirm(cell);
-      });
-
-      timeRow.appendChild(timeDiv);
-      timeRow.appendChild(clearDiv);
-
-      const controls = document.createElement('div');
-      controls.classList.add('cell-controls');
-
-      const stockInput = document.createElement('input');
-      stockInput.type = 'number';
-      stockInput.min = '1';
-      stockInput.step = '1';
-      stockInput.value = amount ? String(amount) : '1';
-      stockInput.classList.add('cell-stock-input');
-      stockInput.inputMode = 'numeric';
-      stockInput.pattern = '[0-9]*';
-
-      const addButton = document.createElement('button');
-      addButton.type = 'button';
-      addButton.classList.add('cell-add-button');
-      addButton.textContent = 'toevoegen';
-
-      addButton.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        handleAddStock(cell, stockInput);
-      });
-
-      controls.appendChild(stockInput);
-      controls.appendChild(addButton);
-
-      meta.appendChild(productDiv);
-      meta.appendChild(amountDiv);
-      meta.appendChild(timeRow);
-      meta.appendChild(controls);
-
-      cell.appendChild(location);
-      cell.appendChild(meta);
-
-      return cell;
-    }
-
     function buildGridFromMatrix(matrix) {
       const displayCols = getDisplayCols();
+      const displayRows = getDisplayRows(displayCols);
+
       grid.innerHTML = '';
-
-      const categoryMap = {};
-
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
-          const idx0 = indexFromRowCol(r, c);
-          const tableIndex = idx0 + 1;
+          const cell = document.createElement('div');
+          cell.classList.add('cell', 'row-' + r, 'col-' + c);
+          cell.dataset.row = String(r);
+          cell.dataset.col = String(c);
+
+          cell.style.flex = '0 0 calc((100% - ' + (displayCols - 1) + ' * 15px) / ' + displayCols + ')';
+          cell.style.height = 'calc((100% - ' + (displayRows - 1) + ' * 15px) / ' + displayRows + ')';
+
+          const color = matrix[r - 1][c - 1];
+          if (COLOR_CLASSES.indexOf(color) === -1) {
+            cell.classList.add('grey');
+          } else {
+            cell.classList.add(color);
+          }
+
+          const tableIndex = indexFromRowCol(r, c) + 1;
           const tRow = tableRows[tableIndex] || [];
           let productId = tRow[2] ? String(tRow[2]) : '';
-          if (!productId && products && products[idx0]) {
-            productId = products[idx0].id;
+          const cellIndex0 = indexFromRowCol(r, c);
+
+          if (!productId && products && products[cellIndex0]) {
+            productId = products[cellIndex0].id;
             tRow[2] = productId;
             tableRows[tableIndex] = tRow;
           }
 
-          const categoryNameRaw = getProductCategoryById(productId);
-          let categoryName = categoryNameRaw && categoryNameRaw.length > 0 ? categoryNameRaw : 'Overig';
+          const amount = tRow[3] ? String(tRow[3]) : '';
+          const startEpochStr = tRow[4] ? String(tRow[4]) : '';
+          const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
 
-          if (!categoryMap[categoryName]) {
-            categoryMap[categoryName] = [];
+          if (productId) {
+            cell.classList.add(productId);
           }
-          categoryMap[categoryName].push({ row: r, col: c });
+          if (amount) {
+            cell.classList.add('amount_' + amount);
+          }
+          if (startEpoch !== null) {
+            cell.classList.add('start_time_' + startEpochStr);
+            cell.dataset.startEpoch = startEpochStr;
+          }
+
+          const location = document.createElement('div');
+          location.classList.add('location');
+          const productDisplay = productId ? formatProductDisplay(productId) : '';
+          location.textContent = productDisplay;
+
+          const meta = document.createElement('div');
+          meta.classList.add('cell-meta');
+
+          const productDiv = document.createElement('div');
+          productDiv.classList.add('cell-product');
+          productDiv.textContent = productDisplay;
+
+          const amountDiv = document.createElement('div');
+          amountDiv.classList.add('cell-amount');
+          amountDiv.textContent = amount ? 'aantal: ' + amount : '';
+
+          const timeRow = document.createElement('div');
+          timeRow.classList.add('cell-time-row');
+
+          const timeDiv = document.createElement('div');
+          timeDiv.classList.add('cell-time');
+          if (startEpoch !== null) {
+            timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
+          } else {
+            timeDiv.textContent = '';
+          }
+
+          const clearDiv = document.createElement('div');
+          clearDiv.classList.add('cell-clear');
+          clearDiv.textContent = '🗑';
+          clearDiv.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            openWriteoffConfirm(cell);
+          });
+
+          timeRow.appendChild(timeDiv);
+          timeRow.appendChild(clearDiv);
+
+          const controls = document.createElement('div');
+          controls.classList.add('cell-controls');
+
+          const stockInput = document.createElement('input');
+          stockInput.type = 'number';
+          stockInput.min = '1';
+          stockInput.step = '1';
+          stockInput.value = amount ? String(amount) : '1';
+          stockInput.classList.add('cell-stock-input');
+          stockInput.inputMode = 'numeric';
+          stockInput.pattern = '[0-9]*';
+
+          const addButton = document.createElement('button');
+          addButton.type = 'button';
+          addButton.classList.add('cell-add-button');
+          addButton.textContent = 'toevoegen';
+
+          addButton.addEventListener('click', function (ev) {
+            ev.stopPropagation();
+            handleAddStock(cell, stockInput);
+          });
+
+          controls.appendChild(stockInput);
+          controls.appendChild(addButton);
+
+          meta.appendChild(productDiv);
+          meta.appendChild(amountDiv);
+          meta.appendChild(timeRow);
+          meta.appendChild(controls);
+
+          cell.appendChild(location);
+          cell.appendChild(meta);
+
+          grid.appendChild(cell);
         }
-      }
-
-      const categoryNames = Object.keys(categoryMap).sort(function (a, b) {
-        if (a < b) {
-          return -1;
-        }
-        if (a > b) {
-          return 1;
-        }
-        return 0;
-      });
-
-      for (let i = 0; i < categoryNames.length; i += 1) {
-        const categoryName = categoryNames[i];
-
-        const section = document.createElement('section');
-        section.classList.add('category-section');
-
-        const titleEl = document.createElement('div');
-        titleEl.classList.add('category-title');
-        titleEl.textContent = categoryName;
-        section.appendChild(titleEl);
-
-        const categoryGrid = document.createElement('div');
-        categoryGrid.classList.add('grid');
-        categoryGrid.style.setProperty('--cols', String(displayCols));
-
-        const cells = categoryMap[categoryName];
-        for (let j = 0; j < cells.length; j += 1) {
-          const cellInfo = cells[j];
-          const cell = createCellElement(cellInfo.row, cellInfo.col, matrix);
-          categoryGrid.appendChild(cell);
-        }
-
-        section.appendChild(categoryGrid);
-        grid.appendChild(section);
       }
     }
 
