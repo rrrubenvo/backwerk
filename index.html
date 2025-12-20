@@ -18,38 +18,139 @@
     }
 
     .header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 15px;
       background: #ffffff;
-      padding: 12px 24px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      border-bottom: 1px solid #dddddd;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      z-index: 1;
+      gap: 12px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #fafafa;
+      border: 1px solid #eeeeee;
+      flex: 0 0 auto;
     }
 
     .logo svg {
       display: block;
-      height: 32px;
+      width: 34px;
+      height: 34px;
     }
 
-    .header-buttons {
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .app-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: #111111;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .app-subtitle {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #666666;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-actions {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
+      flex: 0 0 auto;
     }
 
-    .header-button {
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid #000000;
-      background: #ffffff;
-      cursor: pointer;
+    .sync-indicator {
       font-size: 0.85rem;
-      user-select: none;
+      color: #666666;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
 
-    .header-button:hover {
-      background: #f0f0f0;
+    .sync-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #bbbbbb;
+      flex: 0 0 auto;
+    }
+
+    .sync-dot.ok {
+      background: #2c9c3a;
+    }
+
+    .sync-dot.pending {
+      background: #f0b400;
+    }
+
+    .sync-dot.error {
+      background: #d24b4b;
+    }
+
+    .button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: #0b67d0;
+      color: #ffffff;
+      transition: background 150ms ease-out;
+      white-space: nowrap;
+    }
+
+    .button.secondary {
+      background: #ffffff;
+      color: #0b67d0;
+      border: 1px solid #0b67d0;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .button:disabled {
+      cursor: default;
+      opacity: 0.65;
     }
 
     .main {
@@ -84,253 +185,396 @@
     }
 
     .cell:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
       transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-    }
-
-    .cell.grey {
-      background: #e0e0e0;
-    }
-
-    .cell.green {
-      background: #c8e6c9;
-    }
-
-    .cell.orange {
-      background: #ffe0b2;
-    }
-
-    .cell.red {
-      background: #ffcdd2;
-    }
-
-    .cell .location{
-      display: none;
     }
 
     .location {
       position: absolute;
       top: 8px;
-      left: 8px;
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-      font-weight: 600;
-      font-size: 0.8rem;
-      color: #000000;
-      letter-spacing: 0.03em;
+      left: 10px;
+      right: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #111111;
+      z-index: 2;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
     }
 
     .cell-meta {
       position: absolute;
-      left: 8px;
-      right: 8px;
-      bottom: 8px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      font-size: 0.75rem;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 8px;
-      padding: 4px 6px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
-    }
-
-    .cell-product,
-    .cell-amount {
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: #111111;
+      gap: 5px;
+      z-index: 2;
     }
 
     .cell-product {
+      font-size: 0.78rem;
       font-weight: 600;
+      color: #1b1b1b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cell-amount {
+      font-size: 0.76rem;
+      color: #333333;
     }
 
     .cell-time-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 10px;
     }
 
     .cell-time {
-      max-width: 100%;
+      font-size: 0.72rem;
+      color: #555555;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
-      color: #111111;
     }
 
     .cell-clear {
-      font-size: 0.9rem;
+      font-size: 1rem;
+      line-height: 1;
       cursor: pointer;
       user-select: none;
-      padding: 3px 6px;
-      border-radius: 4px;
-    }
-
-    .cell-clear:hover {
-      background: rgba(0, 0, 0, 0.06);
+      flex: 0 0 auto;
     }
 
     .cell-controls {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 4px;
+      gap: 8px;
+      margin-top: 2px;
     }
 
     .cell-stock-input {
-      flex: 1;
-      box-sizing: border-box;
-      padding: 4px 6px;
-      border-radius: 6px;
+      width: 70px;
+      padding: 8px 8px;
+      border-radius: 10px;
       border: 1px solid #cccccc;
-      font-size: 0.75rem;
-      text-align: center;
+      font-size: 0.9rem;
+      flex: 0 0 auto;
+      background: #ffffff;
     }
 
     .cell-add-button {
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid #000000;
-      background: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 0.75rem;
-      user-select: none;
+      background: #0b67d0;
+      color: #ffffff;
+      flex: 1;
+      transition: background 150ms ease-out;
     }
 
-    .cell-add-button:hover {
-      background: #f0f0f0;
-    }
-    
-    .cell.grey .cell-clear {
-      display: none;
-    }
-    
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      display: none;
-      z-index: 10;
+    .cell-add-button:active {
+      transform: translateY(1px);
     }
 
-    .overlay.active {
-      display: block;
+    .green {
+      background: #8fe59b;
+    }
+
+    .orange {
+      background: #ffcd72;
+    }
+
+    .grey {
+      background: #e0e0e0;
+    }
+
+    .red {
+      background: #ffa1a1;
     }
 
     .popup {
-      position: fixed;
-      inset: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 11;
+      z-index: 20;
     }
 
-    .popup.active {
+    .popup.visible {
       display: flex;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      z-index: 30;
+    }
+
+    .overlay.visible {
+      display: block;
     }
 
     .popup-panel {
       background: #ffffff;
-      border-radius: 14px;
-      max-width: 960px;
-      width: 90%;
-      max-height: 80vh;
-      padding: 16px 20px 20px;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+      border-radius: 18px;
+      width: min(460px, calc(100% - 30px));
+      max-height: min(90vh, 640px);
+      overflow: hidden;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.22);
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
     }
 
-    .writeoff-panel {
-      max-width: 480px;
-      width: min(90%, 480px);
+    .popup-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid #eeeeee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .popup-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #111111;
+      flex: 1;
+    }
+
+    .popup-close {
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 700;
+      color: #0b67d0;
+      border: 1px solid #0b67d0;
+      background: #ffffff;
+      user-select: none;
+    }
+
+    .popup-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .popup-body label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #333333;
+    }
+
+    .popup-body input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cccccc;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+
+    .popup-actions {
+      padding: 14px 16px;
+      border-top: 1px solid #eeeeee;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .popup-actions .button.secondary {
+      padding: 10px 14px;
+    }
+
+    .popup-actions .button {
+      padding: 10px 14px;
     }
 
     .writeoff-list-panel {
       max-width: 720px;
-      width: min(95%, 720px);
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #writeoff-content {
-      text-align: center;
-    }
-
-    #writeoff-list-content {
-      font-size: 0.85rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
+      width: min(720px, calc(100% - 30px));
+      max-height: min(90vh, 720px);
       overflow: hidden;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.22);
+      background: #ffffff;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .popup-header {
+    .writeoff-list-body {
+      overflow: auto;
+      padding: 14px 16px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .writeoff-item {
+      border: 1px solid #eeeeee;
+      border-radius: 14px;
+      padding: 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #fafafa;
+    }
+
+    .writeoff-item-header {
+      display: flex;
+      align-items: baseline;
       justify-content: space-between;
-      margin-bottom: 10px;
-    }
-
-    .popup-title {
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .popup-close {
-      font-size: 1.2rem;
-      cursor: pointer;
-      user-select: none;
-      padding: 4px 8px;
-      border-radius: 999px;
+    .writeoff-item-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #111111;
     }
 
-    .popup-close:hover {
-      background: #f0f0f0;
+    .writeoff-item-meta {
+      font-size: 0.82rem;
+      color: #555555;
+      text-align: right;
+      flex: 0 0 auto;
     }
 
-    .writeoff-list-filters {
-      margin-bottom: 10px;
+    .writeoff-item-actions {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
+      justify-content: flex-end;
+      gap: 10px;
     }
 
-    #writeoff-date-input {
-      padding: 4px 8px;
-      border-radius: 6px;
-      border: 1px solid #cccccc;
+    .writeoff-item-actions .button {
       font-size: 0.85rem;
+      padding: 9px 12px;
+      border-radius: 12px;
     }
 
-    #writeoff-list-table-wrapper {
-      flex: 1;
-      overflow-y: auto;
+    .writeoff-item-actions .button.secondary {
+      border-radius: 12px;
     }
 
-    .writeoff-table {
+    .writeoff-list-empty {
+      font-size: 0.9rem;
+      color: #666666;
+      text-align: center;
+      padding: 24px 10px;
+    }
+
+    .writeoff-confirm-panel {
+      max-width: 460px;
+      width: min(460px, calc(100% - 30px));
+      max-height: min(90vh, 640px);
+      overflow: hidden;
+      box-shadow: 0 18px 55px rgba(0,0,0,0.22);
+      background: #ffffff;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .writeoff-confirm-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .writeoff-confirm-body p {
+      margin: 0;
+      color: #333333;
+      font-size: 0.9rem;
+      line-height: 1.35;
+    }
+
+    .writeoff-confirm-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .writeoff-confirm-row label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #333333;
+    }
+
+    .writeoff-confirm-row textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #cccccc;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      box-sizing: border-box;
+      resize: vertical;
+      min-height: 84px;
+      font-family: inherit;
+    }
+
+    .writeoff-confirm-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+      background: #fafafa;
+      border-radius: 14px;
+      border: 1px solid #eeeeee;
+      padding: 12px 12px;
+    }
+
+    .writeoff-confirm-info div {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .writeoff-confirm-info span {
+      font-size: 0.78rem;
+      color: #666666;
+      font-weight: 700;
+    }
+
+    .writeoff-confirm-info strong {
+      font-size: 0.9rem;
+      color: #111111;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .writeoff-summary-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      margin-top: 6px;
     }
 
-    .writeoff-table th,
-    .writeoff-table td {
+    .writeoff-summary-table th,
+    .writeoff-summary-table td {
       padding: 4px 6px;
       border-bottom: 1px solid #eeeeee;
       text-align: left;
@@ -341,219 +585,292 @@
       text-align: center;
       margin-top: 6px;
     }
+  
+
+    .grid-container {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .category-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin: 4px 2px 0;
+    }
+
+    .category-grid {
+      height: auto;
+    }
+
+    .category-grid .cell {
+      height: 120px;
+      max-height: 120px;
+    }
+
   </style>
 </head>
 <body>
   <header class="header">
-    <div class="logo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124.72 22.68">
-        <defs>
-          <style>.a{fill:#000000;}</style>
-        </defs>
-        <title>BackWerk Logo</title>
-        <path class="a" d="M306.9,303.79q0,1.65,1.74,1.65h.43q1.74,0,1.74-1.65v-3.27A.79.79,0,0,1,311,300l.91-1c.11-.13.19-.19.25-.19s.12.07.21.21l3.51,5.22a3.54,3.54,0,0,0,.83.85,1.93,1.93,0,0,0,1.15.32h1.59a1.31,1.31,0,0,0,1-.29.9.9,0,0,0,.29-.67,1.3,1.3,0,0,0-.24-.69L315.07,296a.37.37,0,0,1-.08-.21.26.26,0,0,1,.11-.19l5.14-5.72a1.35,1.35,0,0,0,.43-.91.84.84,0,0,0-.31-.67,1.21,1.21,0,0,0-.84-.27H318a1.88,1.88,0,0,0-1.14.33,7.21,7.21,0,0,0-.9.87l-4.79,5.49q-.17.18-.24.18c-.08,0-.11-.07-.11-.21v-5c0-1.11-.58-1.66-1.74-1.66h-.43c-1.16,0-1.74.55-1.74,1.66Z" transform="translate(-196 -285.32)"></path>
-        <path class="a" d="M299.9,293.64a3.22,3.22,0,0,1-.19,1.22,1.65,1.65,0,0,1-.55.73,2.17,2.17,0,0,1-.87.34,6.08,6.08,0,0,1-1.19.1H296a.27.27,0,0,1-.3-.3v-4.18a.27.27,0,0,1,.3-.3h1.15a6.08,6.08,0,0,1,1.19.1,2.06,2.06,0,0,1,.87.36,1.68,1.68,0,0,1,.55.74,3.12,3.12,0,0,1,.19,1.19m1.5,5.15a.84.84,0,0,1-.08-.21.11.11,0,0,1,.06-.11.35.35,0,0,0,.1-.08c1.63-.89,2.45-2.48,2.45-4.75a5.58,5.58,0,0,0-1.46-4.18A6.26,6.26,0,0,0,298,288h-4.73a1.44,1.44,0,0,0-1.07.41,1.42,1.42,0,0,0-.41,1.07v14.24c0,1.12.59,1.67,1.75,1.67h.4c1.17,0,1.75-.55,1.75-1.67v-4.21a.26.26,0,0,1,.3-.29h.78l.26,0h.27a.44.44,0,0,1,.41.24l2.6,4.67a3.44,3.44,0,0,0,.73.94,1.65,1.65,0,0,0,1.1.35h1.43a1.12,1.12,0,0,0,.84-.28.94.94,0,0,0,.29-.69,1.33,1.33,0,0,0-.22-.67Z" transform="translate(-196 -285.32)"></path>
-        <path class="a" d="M278,303.94a1.39,1.39,0,0,0,1.49,1.48h9a1.22,1.22,0,0,0,1.35-1.4v-.38c0-1-.45-1.48-1.35-1.48h-6.28q-.3,0-.3-.27V298.5a.26.26,0,0,1,.3-.29h3.45a1.22,1.22,0,0,0,1.35-1.4v-.38c0-.95-.45-1.43-1.35-1.43h-3.45c-.2,0-.3-.09-.3-.29v-3.12a.27.27,0,0,1,.3-.3h5.9a1.22,1.22,0,0,0,1.35-1.4v-.4c0-1-.45-1.46-1.35-1.46h-8.65a1.41,1.41,0,0,0-1.49,1.48Z" transform="translate(-196 -285.32)"></path>
-        <path class="a" d="M257.39,304.17a1.68,1.68,0,0,0,.57.89,1.72,1.72,0,0,0,1.13.36h1.41a1.63,1.63,0,0,0,1.68-1.25l2.59-9.41c.05-.21.1-.32.15-.32s.11.11.17.32l2.66,9.36a1.69,1.69,0,0,0,1.73,1.3H271a1.67,1.67,0,0,0,1.13-.36,1.85,1.85,0,0,0,.57-.94l3.89-14.33a3.11,3.11,0,0,0,.08-.64,1.25,1.25,0,0,0-.25-.8,1,1,0,0,0-.84-.32h-1.23a1.42,1.42,0,0,0-1.05.36,2.14,2.14,0,0,0-.52,1l-2.48,9.92c0,.18-.07.27-.13.27s-.13-.09-.19-.27l-2.85-10.1a1.42,1.42,0,0,0-.53-.82,1.39,1.39,0,0,0-.93-.32h-1.28a1.29,1.29,0,0,0-.9.32,1.56,1.56,0,0,0-.51.82l-2.82,10.1c-.06.18-.1.27-.14.27s-.12-.09-.16-.27l-2.47-9.89a2.18,2.18,0,0,0-.52-1,1.39,1.39,0,0,0-1.05-.38h-1.34a1,1,0,0,0-.88.34,1.29,1.29,0,0,0-.26.81,2,2,0,0,0,.1.63Z" transform="translate(-196 -285.32)"></path>
-        <path class="a" d="M206.58,300.8a14.72,14.72,0,0,0,.08-1.58,16.23,16.23,0,0,0-.08-1.69,3.1,3.1,0,0,0-.35-1.18,1.48,1.48,0,0,0-.71-.67,2.85,2.85,0,0,0-1.19-.21,2.08,2.08,0,0,0-.85.17,2.33,2.33,0,0,0-.69.44,1,1,0,0,0-.18.17.56.56,0,0,0-.05.27v5.72a.42.42,0,0,0,.25.37,2.14,2.14,0,0,0,.76.27,5.15,5.15,0,0,0,.86.07,2.25,2.25,0,0,0,1.13-.25,1.72,1.72,0,0,0,.69-.72,3.67,3.67,0,0,0,.33-1.18m11.88,1.3v-2c0-.11-.05-.17-.13-.17a2.26,2.26,0,0,0-.39.07l-.81.17a4,4,0,0,0-1.41.53,1.21,1.21,0,0,0-.48,1.07,1.05,1.05,0,0,0,.41.95,1.74,1.74,0,0,0,1,.27,2.54,2.54,0,0,0,.88-.14,3.13,3.13,0,0,0,.71-.35.41.41,0,0,0,.23-.39m28.92,2.46a.83.83,0,0,1-.26.6,1.09,1.09,0,0,1-.76.25h-1.24a1.92,1.92,0,0,1-1-.25,2.22,2.22,0,0,1-.67-.72l-2.43-4.1c-.07-.1-.13-.15-.2-.15a.77.77,0,0,0-.32.07l-.4.15a.31.31,0,0,0-.2.32v3.19a1.42,1.42,0,0,1-.4,1.14,1.72,1.72,0,0,1-1.17.35H238a1.67,1.67,0,0,1-1.14-.35,1.42,1.42,0,0,1-.4-1.14V289.35a1.42,1.42,0,0,1,.4-1.14,1.72,1.72,0,0,1,1.17-.35h.34a1.72,1.72,0,0,1,1.17.35,1.42,1.42,0,0,1,.4,1.14v7.93c0,.13,0,.2.15.2a.69.69,0,0,0,.27-.1l.5-.22a1,1,0,0,0,.42-.35l2-2.83a3,3,0,0,1,.66-.73,1.62,1.62,0,0,1,1-.24h1.24a.89.89,0,0,1,.61.21.7.7,0,0,1,.23.53,1.28,1.28,0,0,1-.27.75l-2.73,3.75a.46.46,0,0,0-.08.25.91.91,0,0,0,.05.22l3.33,5.32a1.09,1.09,0,0,1,.15.52m-13.57-.69a1,1,0,0,1-.76,1,6.43,6.43,0,0,1-2.8.59,7.63,7.63,0,0,1-2.05-.29,4.4,4.4,0,0,1-1.84-1,5.08,5.08,0,0,1-1.32-2,8.46,8.46,0,0,1-.5-3.12,7.86,7.86,0,0,1,.5-3,5.54,5.54,0,0,1,1.32-2,4.84,4.84,0,0,1,1.84-1.08,6.66,6.66,0,0,1,2.05-.33,6.82,6.82,0,0,1,2.46.39,1.66,1.66,0,0,1,.58.37.74.74,0,0,1,.23.54,2.21,2.21,0,0,1,0,.35,3.5,3.5,0,0,1-.16.53,1.13,1.13,0,0,1-.33.59.81.81,0,0,1-.55.17,1,1,0,0,1-.36-.05l-.37-.11c-.13,0-.3-.07-.5-.11a5.05,5.05,0,0,0-.76-.05,3.44,3.44,0,0,0-1.07.16,1.69,1.69,0,0,0-.76.57,2.83,2.83,0,0,0-.46,1.13,8.52,8.52,0,0,0-.16,1.85,8.72,8.72,0,0,0,.16,1.87,2.63,2.63,0,0,0,.48,1.13,1.6,1.6,0,0,0,.78.56,3.15,3.15,0,0,0,1.06.16,5,5,0,0,0,.83-.06,3.61,3.61,0,0,0,.59-.15l.43-.14a1.25,1.25,0,0,1,.4-.06.88.88,0,0,1,.88.68,2.39,2.39,0,0,1,.16.48,1.15,1.15,0,0,1,0,.31m-11.73.32a1.05,1.05,0,0,1-.28.76,1.3,1.3,0,0,1-.84.34l-.52,0-.44,0a1.19,1.19,0,0,1-.71-.19,1,1,0,0,1-.37-.49c0-.14-.06-.24-.07-.31s0-.11-.08-.11a.21.21,0,0,0-.14.07,4,4,0,0,1-1.27.8,4.64,4.64,0,0,1-1.75.31,4.47,4.47,0,0,1-1.4-.21,3,3,0,0,1-1.1-.64,3.1,3.1,0,0,1-.74-1.08,4,4,0,0,1-.27-1.56,3.66,3.66,0,0,1,.31-1.53,3.19,3.19,0,0,1,.86-1.1,4.88,4.88,0,0,1,1.31-.75,11.78,11.78,0,0,1,1.67-.49l2-.42a.28.28,0,0,0,.25-.29V297a1.35,1.35,0,0,0-.57-1.31,3.35,3.35,0,0,0-1.62-.31,4.68,4.68,0,0,0-1,.12c-.35.08-.71.18-1.07.3a1.53,1.53,0,0,1-.41.07c-.44,0-.74-.29-.88-.86a2,2,0,0,1-.1-.45,2.11,2.11,0,0,1,0-.31,1,1,0,0,1,.21-.59,1.18,1.18,0,0,1,.63-.39,10.52,10.52,0,0,1,1.74-.4,11.91,11.91,0,0,1,1.76-.14,5.83,5.83,0,0,1,3.62.93,3.7,3.7,0,0,1,1.19,3.09v5.52c0,.29,0,.53,0,.72s0,.35.06.48.05.25.08.35a1.87,1.87,0,0,1,0,.34m-12-5.17q0,6.47-5.76,6.46a5.45,5.45,0,0,1-1.3-.16,3.7,3.7,0,0,1-1-.43.4.4,0,0,0-.17-.08s-.1.08-.17.22a.5.5,0,0,1-.34.32,2.32,2.32,0,0,1-.66.08h-.25c-.87,0-1.3-.48-1.3-1.45V289.35a1.45,1.45,0,0,1,.39-1.13,1.76,1.76,0,0,1,1.16-.34H201a1.69,1.69,0,0,1,1.13.34,1.45,1.45,0,0,1,.39,1.13v4.38c0,.08,0,.12.1.12s.11,0,.18-.12a2.51,2.51,0,0,1,1-.67,3.71,3.71,0,0,1,1.34-.24,5.84,5.84,0,0,1,2.05.34,3.88,3.88,0,0,1,1.57,1.09,5.1,5.1,0,0,1,1,1.93,10.18,10.18,0,0,1,.34,2.84m40.32,6V288.35a3,3,0,0,0-3-3H199a3,3,0,0,0-3,3V305a3,3,0,0,0,3,3h48.39a3,3,0,0,0,3-3" transform="translate(-196 -285.32)"></path>
-      </svg>
-    </div>
-    <div class="header-buttons">
-      <div id="writeoff-list-button" class="header-button">afschrijvingen</div>
+    <div class="header-top">
+      <div class="logo-wrap">
+        <div class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 124.72 22.68">
+            <defs>
+              <style>.a{fill:#000000;}</style>
+            </defs>
+            <path class="a" d="M.24,1h9.1c4.72,0,7.57,3.39,7.57,7.28s-2.85,7.25-7.57,7.25H.24ZM8.62,12.74A4.07,4.07,0,0,0,12.79,8.3,4.07,4.07,0,0,0,8.62,3.86H3.42V12.74Z"/>
+            <path class="a" d="M18.65,1H21.8v7.9a3.87,3.87,0,1,0,7.73,0V1h3.14V9a6.38,6.38,0,1,1-12.72,0Z"/>
+            <path class="a" d="M45.86,1h3.27L55.2,16.53H51.54l-1.06-2.91H44.36l-1,2.91H39.78ZM49.47,11l-2-5.56L45.48,11Z"/>
+            <path class="a" d="M57.38,1h3.18L65,11.8,69.46,1h3.19L66.52,16.53H63.5Z"/>
+            <path class="a" d="M74.88,1H86.05V3.86H78.05V7.16H85.9v2.86H78.05v3.68h8.1v2.83H74.88Z"/>
+            <path class="a" d="M88.62,1h3.17l6.58,9.26V1h3.17V16.53H98.45L91.79,7.23v9.3H88.62Z"/>
+            <path class="a" d="M107.59,3.86h-4.71V1h12.6V3.86h-4.71V16.53h-3.18Z"/>
+            <path class="a" d="M116,1h3.17V16.53H116Z"/>
+            <path class="a" d="M121.44,1h3.28l-5,15.56H116.5Z"/>
+          </svg>
+        </div>
+        <div class="title-wrap">
+          <h1 class="app-title">Back-werk stock system</h1>
+          <p class="app-subtitle">Voorraad over locaties (Google Sheet sync)</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="sync-indicator" id="syncIndicator">
+          <span class="sync-dot" id="syncDot"></span>
+          <span id="syncLabel">sync idle</span>
+        </div>
+        <button class="button secondary" id="writeoffButton" type="button">afschrijvingen</button>
+      </div>
     </div>
   </header>
 
   <main class="main">
-    <div id="grid" class="grid"></div>
+    <div id="grid" class="grid-container"></div>
   </main>
 
   <div id="overlay" class="overlay"></div>
 
-  <div id="writeoff-popup" class="popup">
-    <div class="popup-panel writeoff-panel">
+  <div id="writeoffOverlay" class="overlay"></div>
+
+  <div id="writeoffListPopup" class="popup">
+    <div class="writeoff-list-panel">
       <div class="popup-header">
-        <div id="writeoff-title" class="popup-title"></div>
-        <div id="writeoff-close" class="popup-close">×</div>
+        <h2 class="popup-title">Afschrijvingen</h2>
+        <div class="popup-close" id="writeoffListClose">sluiten</div>
       </div>
-      <div id="writeoff-content"></div>
+      <div class="writeoff-list-body" id="writeoffListBody">
+        <div class="writeoff-list-empty">Geen afschrijvingen gevonden.</div>
+      </div>
+      <div class="popup-actions">
+        <button class="button secondary" id="writeoffListRefresh" type="button">verversen</button>
+      </div>
     </div>
   </div>
 
-  <div id="writeoff-list-popup" class="popup">
-    <div class="popup-panel writeoff-list-panel">
+  <div id="writeoffConfirmPopup" class="popup">
+    <div class="writeoff-confirm-panel">
       <div class="popup-header">
-        <div class="popup-title">Afschrijvingen</div>
-        <div id="writeoff-list-close" class="popup-close">×</div>
+        <h2 class="popup-title">Afschrijven</h2>
+        <div class="popup-close" id="writeoffConfirmClose">sluiten</div>
       </div>
-      <div id="writeoff-list-content">
-        <div class="writeoff-list-filters">
-          <label>
-            Datum:
-            <input type="date" id="writeoff-date-input">
-          </label>
+      <div class="writeoff-confirm-body">
+        <p>Weet je zeker dat je deze locatie wil afschrijven?</p>
+        <div class="writeoff-confirm-info">
+          <div>
+            <span>Locatie</span>
+            <strong id="writeoffLoc"></strong>
+          </div>
+          <div>
+            <span>Product</span>
+            <strong id="writeoffProd"></strong>
+          </div>
+          <div>
+            <span>Aantal</span>
+            <strong id="writeoffAmt"></strong>
+          </div>
+          <div>
+            <span>Tijd op locatie</span>
+            <strong id="writeoffTime"></strong>
+          </div>
         </div>
-        <div id="writeoff-list-table-wrapper"></div>
+        <div class="writeoff-confirm-row">
+          <label for="writeoffReason">Reden</label>
+          <textarea id="writeoffReason" placeholder="Bijv. verlopen, beschadigd, etc."></textarea>
+        </div>
+      </div>
+      <div class="popup-actions">
+        <button class="button secondary" id="writeoffCancel" type="button">annuleren</button>
+        <button class="button" id="writeoffConfirm" type="button">afschrijven</button>
       </div>
     </div>
   </div>
 
   <script>
-    const COLS = 6;
-    const ROWS = 5;
-    const TOTAL_CELLS = ROWS * COLS;
-    const COLOR_CLASSES = ['grey', 'green', 'orange', 'red'];
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGVZusGYvG-9b3mLz7UxSZJooAUa4Tdypofp_XUl6bLsmKurfmE6ZwHH9RfErxBRncog/exec';
-
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8uCq2s6nZBy9Y4Tdypofp_XUl6bLsmKurfmE6ZwHH9RfErxBRncog/exec';
     const grid = document.getElementById('grid');
     const baseCharCode = 'A'.charCodeAt(0);
-    const overlay = document.getElementById('overlay');
+    const ROWS = 5;
+    const COLS = 6;
+    const TOTAL_CELLS = ROWS * COLS;
 
-    const writeoffPopup = document.getElementById('writeoff-popup');
-    const writeoffClose = document.getElementById('writeoff-close');
-    const writeoffTitle = document.getElementById('writeoff-title');
-    const writeoffContent = document.getElementById('writeoff-content');
-
-    const writeoffListPopup = document.getElementById('writeoff-list-popup');
-    const writeoffListClose = document.getElementById('writeoff-list-close');
-    const writeoffListButton = document.getElementById('writeoff-list-button');
-    const writeoffDateInput = document.getElementById('writeoff-date-input');
-    const writeoffListTableWrapper = document.getElementById('writeoff-list-table-wrapper');
+    const COLOR_CLASSES = ['green', 'orange', 'grey', 'red'];
 
     let tableRows = [];
-    let statusMatrix = [];
-    let products = [];
-    let writeOffs = [];
-    let syncTimeoutId = null;
-    let observer = null;
-    let elapsedTimerId = null;
-    let writeoffCell = null;
+    let products = null;
+    let matrix = createEmptyMatrix();
+    let pendingSync = false;
+    let syncTimer = null;
+    let syncError = '';
+    let lastSheetLoadMs = 0;
+    let lastWriteoffLoadMs = 0;
+    let writeoffRows = [];
 
-    function indexFromRowCol(r, c) {
-      return (r - 1) * COLS + (c - 1);
-    }
+    const syncIndicator = document.getElementById('syncIndicator');
+    const syncDot = document.getElementById('syncDot');
+    const syncLabel = document.getElementById('syncLabel');
+    const writeoffButton = document.getElementById('writeoffButton');
 
-    function createEmptyMatrix(rows, cols, value) {
-      const matrix = [];
-      for (let r = 0; r < rows; r += 1) {
+    const overlay = document.getElementById('overlay');
+
+    const writeoffOverlay = document.getElementById('writeoffOverlay');
+    const writeoffListPopup = document.getElementById('writeoffListPopup');
+    const writeoffListBody = document.getElementById('writeoffListBody');
+    const writeoffListClose = document.getElementById('writeoffListClose');
+    const writeoffListRefresh = document.getElementById('writeoffListRefresh');
+
+    const writeoffConfirmPopup = document.getElementById('writeoffConfirmPopup');
+    const writeoffConfirmClose = document.getElementById('writeoffConfirmClose');
+    const writeoffCancel = document.getElementById('writeoffCancel');
+    const writeoffConfirm = document.getElementById('writeoffConfirm');
+    const writeoffLoc = document.getElementById('writeoffLoc');
+    const writeoffProd = document.getElementById('writeoffProd');
+    const writeoffAmt = document.getElementById('writeoffAmt');
+    const writeoffTime = document.getElementById('writeoffTime');
+    const writeoffReason = document.getElementById('writeoffReason');
+
+    let writeoffTargetCell = null;
+
+    function createEmptyMatrix() {
+      const arr = [];
+      for (let r = 0; r < ROWS; r += 1) {
         const row = [];
-        for (let c = 0; c < cols; c += 1) {
-          row.push(value);
+        for (let c = 0; c < COLS; c += 1) {
+          row.push('grey');
         }
-        matrix.push(row);
+        arr.push(row);
       }
-      return matrix;
+      return arr;
     }
 
-    function buildTableFromValues(values) {
-      const header = ['location', 'class', 'product', 'amount', 'start_time'];
-      const rows = [];
-      rows.push(header);
+    function indexFromRowCol(row, col) {
+      return (row - 1) * COLS + (col - 1);
+    }
 
-      for (let r = 1; r <= ROWS; r += 1) {
-        for (let c = 1; c <= COLS; c += 1) {
-          const idx = indexFromRowCol(r, c);
-          const srcRow = values && values[idx + 1] ? values[idx + 1] : [];
-          const canonicalLoc = String.fromCharCode(baseCharCode + c - 1) + r;
+    function rowColFromIndex(index) {
+      const row = Math.floor(index / COLS) + 1;
+      const col = (index % COLS) + 1;
+      return { row: row, col: col };
+    }
 
-          let loc = srcRow[0];
-          if (!loc || String(loc).trim() === '') {
-            loc = canonicalLoc;
+    function locationLabel(row, col) {
+      const letter = String.fromCharCode(baseCharCode + (row - 1));
+      return letter + col;
+    }
+
+    function computeElapsedLabel(startEpochStr) {
+      if (!startEpochStr) {
+        return '';
+      }
+      const startEpoch = Number(startEpochStr);
+      if (!startEpoch || isNaN(startEpoch)) {
+        return '';
+      }
+      const now = Date.now();
+      const diffMs = now - startEpoch;
+      if (diffMs < 0) {
+        return '0m';
+      }
+      const diffMin = Math.floor(diffMs / 60000);
+      const days = Math.floor(diffMin / (60 * 24));
+      const hours = Math.floor((diffMin - days * 60 * 24) / 60);
+      const mins = diffMin - days * 60 * 24 - hours * 60;
+      const parts = [];
+      if (days > 0) {
+        parts.push(days + 'd');
+      }
+      if (hours > 0) {
+        parts.push(hours + 'u');
+      }
+      parts.push(mins + 'm');
+      return parts.join(' ');
+    }
+
+    function setSyncState(state, label) {
+      syncDot.classList.remove('ok', 'pending', 'error');
+      if (state === 'ok') {
+        syncDot.classList.add('ok');
+      }
+      if (state === 'pending') {
+        syncDot.classList.add('pending');
+      }
+      if (state === 'error') {
+        syncDot.classList.add('error');
+      }
+      syncLabel.textContent = label;
+    }
+
+    function scheduleSync() {
+      pendingSync = true;
+      setSyncState('pending', 'sync pending');
+      if (syncTimer) {
+        clearTimeout(syncTimer);
+      }
+      syncTimer = setTimeout(function () {
+        syncTimer = null;
+        if (pendingSync) {
+          syncChanges();
+        }
+      }, 800);
+    }
+
+    function updateMatrixFromRows(rows) {
+      matrix = createEmptyMatrix();
+      for (let i = 1; i < rows.length; i += 1) {
+        const row = rows[i];
+        const rowIndex = Number(row[0]);
+        const colIndex = Number(row[1]);
+        const color = row[2];
+        if (rowIndex >= 1 && rowIndex <= ROWS && colIndex >= 1 && colIndex <= COLS) {
+          if (COLOR_CLASSES.indexOf(color) !== -1) {
+            matrix[rowIndex - 1][colIndex - 1] = color;
+          } else {
+            matrix[rowIndex - 1][colIndex - 1] = 'grey';
           }
-
-          let color = srcRow[1];
-          if (!color || COLOR_CLASSES.indexOf(String(color)) === -1) {
-            color = 'grey';
-          }
-
-          let product = srcRow[2] || '';
-          let amount = srcRow[3] || '';
-          let startTime = srcRow[4] || '';
-
-          rows.push([loc, color, product, amount, startTime]);
         }
       }
-      return rows;
     }
 
-    function tableToStatusMatrix(rows) {
-      const matrix = createEmptyMatrix(ROWS, COLS, 'grey');
-      for (let r = 1; r <= ROWS; r += 1) {
-        for (let c = 1; c <= COLS; c += 1) {
-          const idx = indexFromRowCol(r, c) + 1;
-          const row = rows[idx];
-          const color = row && row[1] ? row[1] : 'grey';
-          matrix[r - 1][c - 1] = COLOR_CLASSES.indexOf(color) === -1 ? 'grey' : color;
-        }
+    function parseSheetRows(data) {
+      if (!data || !data.rows || !Array.isArray(data.rows)) {
+        return [];
       }
-      return matrix;
+      return data.rows;
     }
 
-    function buildProductsFromValues(rows) {
-      const list = [];
-      if (!rows) {
-        return list;
+    function parseProducts(data) {
+      if (!data || !data.products || !Array.isArray(data.products)) {
+        return null;
       }
-      for (let i = 0; i < rows.length; i += 1) {
-        const row = rows[i] || [];
-        const id = row[0];
-        const title = row[1];
-        if (!id || !title) {
-          continue;
-        }
-        list.push({
-          id: String(id).trim(),
-          title: String(title).trim()
-        });
-      }
-      return list;
+      return data.products;
     }
 
-    function buildWriteOffsFromValues(rows) {
-      const list = [];
-      if (!rows) {
-        return list;
+    function getProductTitleById(idStr) {
+      if (!products || !Array.isArray(products)) {
+        return '';
       }
-      for (let i = 0; i < rows.length; i += 1) {
-        const row = rows[i] || [];
-        const date = row[0] ? String(row[0]) : '';
-        const time = row[1] ? String(row[1]) : '';
-        const productId = row[2] ? String(row[2]) : '';
-        const productTitle = row[3] ? String(row[3]) : '';
-        const amount = row[4] ? String(row[4]) : '';
-        if (!date && !time && !productId && !productTitle && !amount) {
-          continue;
-        }
-        list.push({
-          date: date,
-          time: time,
-          productId: productId,
-          productTitle: productTitle,
-          amount: amount
-        });
-      }
-      return list;
-    }
-
-    function computeElapsedMinutes(startEpoch) {
-      const base = Number(startEpoch);
-      if (!base || base <= 0) {
-        return 0;
-      }
-      const diffMs = Date.now() - base;
-      if (diffMs <= 0) {
-        return 0;
-      }
-      const minutes = Math.floor(diffMs / 60000);
-      return minutes;
-    }
-
-    function computeElapsedLabel(startEpoch) {
-      const minutes = computeElapsedMinutes(startEpoch);
-      return String(minutes) + ' min';
-    }
-
-    function getProductTitleById(productId) {
-      const idStr = String(productId);
       for (let i = 0; i < products.length; i += 1) {
         if (products[i].id === idStr) {
           return products[i].title;
@@ -589,194 +906,311 @@
       return rows < 1 ? 1 : rows;
     }
 
+    function getProductCategory(productId) {
+      const s = String(productId || '').trim();
+      if (!s) {
+        return '';
+      }
+      const m = s.match(/^\d/);
+      return m ? m[0] : '';
+    }
+
+    function makeCell(r, c, matrix, displayCols) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell', 'row-' + r, 'col-' + c);
+      cell.dataset.row = String(r);
+      cell.dataset.col = String(c);
+
+      cell.style.flex = '0 0 calc((100% - ' + (displayCols - 1) + ' * 15px) / ' + displayCols + ')';
+
+      const color = matrix[r - 1][c - 1];
+      if (COLOR_CLASSES.indexOf(color) === -1) {
+        cell.classList.add('grey');
+      } else {
+        cell.classList.add(color);
+      }
+
+      const tableIndex = indexFromRowCol(r, c) + 1;
+      const tRow = tableRows[tableIndex] || [];
+      let productId = tRow[2] ? String(tRow[2]) : '';
+
+      const cellIndex0 = indexFromRowCol(r, c);
+      if (!productId && products && products[cellIndex0]) {
+        productId = products[cellIndex0].id;
+        tRow[2] = productId;
+        tableRows[tableIndex] = tRow;
+      }
+
+      const amount = tRow[3] ? String(tRow[3]) : '';
+      const startEpochStr = tRow[4] ? String(tRow[4]) : '';
+      const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
+
+      if (productId) {
+        cell.dataset.productId = productId;
+        cell.classList.add(productId);
+      } else {
+        cell.dataset.productId = '';
+      }
+
+      if (amount) {
+        cell.classList.add('amount_' + amount);
+      }
+      if (startEpoch !== null) {
+        cell.classList.add('start_time_' + startEpochStr);
+        cell.dataset.startEpoch = startEpochStr;
+      }
+
+      const location = document.createElement('div');
+      location.classList.add('location');
+      const productDisplay = productId ? formatProductDisplay(productId) : '';
+      location.textContent = productDisplay;
+
+      const meta = document.createElement('div');
+      meta.classList.add('cell-meta');
+
+      const productDiv = document.createElement('div');
+      productDiv.classList.add('cell-product');
+      productDiv.textContent = productDisplay;
+
+      const amountDiv = document.createElement('div');
+      amountDiv.classList.add('cell-amount');
+      amountDiv.textContent = amount ? 'aantal: ' + amount : '';
+
+      const timeRow = document.createElement('div');
+      timeRow.classList.add('cell-time-row');
+
+      const timeDiv = document.createElement('div');
+      timeDiv.classList.add('cell-time');
+      if (startEpoch !== null) {
+        timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
+      } else {
+        timeDiv.textContent = '';
+      }
+
+      const clearDiv = document.createElement('div');
+      clearDiv.classList.add('cell-clear');
+      clearDiv.textContent = '🗑';
+      clearDiv.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        openWriteoffConfirm(cell);
+      });
+
+      timeRow.appendChild(timeDiv);
+      timeRow.appendChild(clearDiv);
+
+      const controls = document.createElement('div');
+      controls.classList.add('cell-controls');
+
+      const stockInput = document.createElement('input');
+      stockInput.type = 'number';
+      stockInput.min = '1';
+      stockInput.step = '1';
+      stockInput.value = amount ? String(amount) : '1';
+      stockInput.classList.add('cell-stock-input');
+      stockInput.inputMode = 'numeric';
+      stockInput.pattern = '[0-9]*';
+
+      const addButton = document.createElement('button');
+      addButton.type = 'button';
+      addButton.classList.add('cell-add-button');
+      addButton.textContent = 'toevoegen';
+
+      addButton.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        handleAddStock(cell, stockInput);
+      });
+
+      controls.appendChild(stockInput);
+      controls.appendChild(addButton);
+
+      meta.appendChild(productDiv);
+      meta.appendChild(amountDiv);
+      meta.appendChild(timeRow);
+      meta.appendChild(controls);
+
+      cell.appendChild(location);
+      cell.appendChild(meta);
+
+      return cell;
+    }
+
     function buildGridFromMatrix(matrix) {
       const displayCols = getDisplayCols();
-      const displayRows = getDisplayRows(displayCols);
 
-      grid.innerHTML = '';
+      const groups = new Map();
+
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
-          const cell = document.createElement('div');
-          cell.classList.add('cell', 'row-' + r, 'col-' + c);
-          cell.dataset.row = String(r);
-          cell.dataset.col = String(c);
-
-          cell.style.flex = '0 0 calc((100% - ' + (displayCols - 1) + ' * 15px) / ' + displayCols + ')';
-          cell.style.height = 'calc((100% - ' + (displayRows - 1) + ' * 15px) / ' + displayRows + ')';
-
-          const color = matrix[r - 1][c - 1];
-          if (COLOR_CLASSES.indexOf(color) === -1) {
-            cell.classList.add('grey');
-          } else {
-            cell.classList.add(color);
-          }
-
           const tableIndex = indexFromRowCol(r, c) + 1;
           const tRow = tableRows[tableIndex] || [];
           let productId = tRow[2] ? String(tRow[2]) : '';
-          const cellIndex0 = indexFromRowCol(r, c);
 
+          const cellIndex0 = indexFromRowCol(r, c);
           if (!productId && products && products[cellIndex0]) {
             productId = products[cellIndex0].id;
             tRow[2] = productId;
             tableRows[tableIndex] = tRow;
           }
 
-          const amount = tRow[3] ? String(tRow[3]) : '';
-          const startEpochStr = tRow[4] ? String(tRow[4]) : '';
-          const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
+          const cat = getProductCategory(productId) || 'leeg';
 
-          if (productId) {
-  cell.dataset.productId = productId;
-  cell.classList.add(productId);
-} else {
-  cell.dataset.productId = '';
-}
-
-          if (amount) {
-            cell.classList.add('amount_' + amount);
+          if (!groups.has(cat)) {
+            groups.set(cat, []);
           }
-          if (startEpoch !== null) {
-            cell.classList.add('start_time_' + startEpochStr);
-            cell.dataset.startEpoch = startEpochStr;
-          }
-
-          const location = document.createElement('div');
-          location.classList.add('location');
-          const productDisplay = productId ? formatProductDisplay(productId) : '';
-          location.textContent = productDisplay;
-
-          const meta = document.createElement('div');
-          meta.classList.add('cell-meta');
-
-          const productDiv = document.createElement('div');
-          productDiv.classList.add('cell-product');
-          productDiv.textContent = productDisplay;
-
-          const amountDiv = document.createElement('div');
-          amountDiv.classList.add('cell-amount');
-          amountDiv.textContent = amount ? 'aantal: ' + amount : '';
-
-          const timeRow = document.createElement('div');
-          timeRow.classList.add('cell-time-row');
-
-          const timeDiv = document.createElement('div');
-          timeDiv.classList.add('cell-time');
-          if (startEpoch !== null) {
-            timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
-          } else {
-            timeDiv.textContent = '';
-          }
-
-          const clearDiv = document.createElement('div');
-          clearDiv.classList.add('cell-clear');
-          clearDiv.textContent = '🗑';
-          clearDiv.addEventListener('click', function (ev) {
-            ev.stopPropagation();
-            openWriteoffConfirm(cell);
-          });
-
-          timeRow.appendChild(timeDiv);
-          timeRow.appendChild(clearDiv);
-
-          const controls = document.createElement('div');
-          controls.classList.add('cell-controls');
-
-          const stockInput = document.createElement('input');
-          stockInput.type = 'number';
-          stockInput.min = '1';
-          stockInput.step = '1';
-          stockInput.value = amount ? String(amount) : '1';
-          stockInput.classList.add('cell-stock-input');
-          stockInput.inputMode = 'numeric';
-          stockInput.pattern = '[0-9]*';
-
-          const addButton = document.createElement('button');
-          addButton.type = 'button';
-          addButton.classList.add('cell-add-button');
-          addButton.textContent = 'toevoegen';
-
-          addButton.addEventListener('click', function (ev) {
-            ev.stopPropagation();
-            handleAddStock(cell, stockInput);
-          });
-
-          controls.appendChild(stockInput);
-          controls.appendChild(addButton);
-
-          meta.appendChild(productDiv);
-          meta.appendChild(amountDiv);
-          meta.appendChild(timeRow);
-          meta.appendChild(controls);
-
-          cell.appendChild(location);
-          cell.appendChild(meta);
-
-          grid.appendChild(cell);
+          groups.get(cat).push({ r: r, c: c });
         }
       }
-    }
 
-    function getCellColorClass(element) {
-      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
-        const cls = COLOR_CLASSES[i];
-        if (element.classList.contains(cls)) {
-          return cls;
+      const cats = Array.from(groups.keys()).sort(function (a, b) {
+        if (a === 'leeg' && b === 'leeg') {
+          return 0;
         }
+        if (a === 'leeg') {
+          return 1;
+        }
+        if (b === 'leeg') {
+          return -1;
+        }
+        return Number(a) - Number(b);
+      });
+
+      grid.innerHTML = '';
+
+      for (let i = 0; i < cats.length; i += 1) {
+        const cat = cats[i];
+
+        const title = document.createElement('div');
+        title.classList.add('category-title');
+        title.textContent = cat === 'leeg' ? 'Leeg / onbekend' : 'Categorie ' + cat;
+
+        const subGrid = document.createElement('div');
+        subGrid.classList.add('grid', 'category-grid');
+        subGrid.dataset.category = cat;
+
+        const positions = groups.get(cat) || [];
+        for (let j = 0; j < positions.length; j += 1) {
+          const pos = positions[j];
+          subGrid.appendChild(makeCell(pos.r, pos.c, matrix, displayCols));
+        }
+
+        grid.appendChild(title);
+        grid.appendChild(subGrid);
       }
-      return 'grey';
     }
 
-    function scheduleSync() {
-      if (syncTimeoutId !== null) {
-        clearTimeout(syncTimeoutId);
-      }
-      syncTimeoutId = setTimeout(function () {
-        syncTimeoutId = null;
-        sendStatusToSheet();
-      }, 500);
-    }
-
-    function startObserver() {
-      observer = new MutationObserver(function (mutations) {
-        let changed = false;
-        for (let i = 0; i < mutations.length; i += 1) {
-          const mutation = mutations[i];
-          if (mutation.type !== 'attributes') {
-            continue;
+    function applyMatrixColorsFromCells() {
+      const cells = grid.querySelectorAll('.cell');
+      let changed = false;
+      for (let i = 0; i < cells.length; i += 1) {
+        const cell = cells[i];
+        const row = Number(cell.dataset.row);
+        const col = Number(cell.dataset.col);
+        if (row >= 1 && row <= ROWS && col >= 1 && col <= COLS) {
+          let found = 'grey';
+          for (let j = 0; j < COLOR_CLASSES.length; j += 1) {
+            if (cell.classList.contains(COLOR_CLASSES[j])) {
+              found = COLOR_CLASSES[j];
+              break;
+            }
           }
-          if (mutation.attributeName !== 'class') {
-            continue;
-          }
-          const element = mutation.target;
-          if (!element.dataset || !element.dataset.row || !element.dataset.col) {
-            continue;
-          }
-          const rowIndex = parseInt(element.dataset.row, 10) - 1;
-          const colIndex = parseInt(element.dataset.col, 10) - 1;
-          if (rowIndex < 0 || colIndex < 0) {
-            continue;
-          }
-          const color = getCellColorClass(element);
-          if (statusMatrix[rowIndex][colIndex] !== color) {
-            statusMatrix[rowIndex][colIndex] = color;
-            const idx = indexFromRowCol(rowIndex + 1, colIndex + 1) + 1;
+          if (matrix[row - 1][col - 1] !== found) {
+            matrix[row - 1][col - 1] = found;
+            const idx = indexFromRowCol(row, col) + 1;
             if (tableRows[idx]) {
-              tableRows[idx][1] = color;
+              tableRows[idx][1] = found;
             }
             changed = true;
           }
         }
-        if (changed) {
-          scheduleSync();
-        }
-      });
+      }
+      if (changed) {
+        scheduleSync();
+      }
+    }
 
-      observer.observe(grid, {
-        attributes: true,
-        attributeFilter: ['class'],
-        subtree: true
+    function openWriteoffList() {
+      writeoffOverlay.classList.add('visible');
+      writeoffListPopup.classList.add('visible');
+      renderWriteoffList();
+      loadWriteoffsIfNeeded();
+    }
+
+    function closeWriteoffList() {
+      writeoffOverlay.classList.remove('visible');
+      writeoffListPopup.classList.remove('visible');
+    }
+
+    function openWriteoffConfirm(cell) {
+      writeoffTargetCell = cell;
+      const row = Number(cell.dataset.row);
+      const col = Number(cell.dataset.col);
+      const label = locationLabel(row, col);
+      const productId = cell.dataset.productId || '';
+      const amountMatch = Array.from(cell.classList).find(function (cls) {
+        return cls.indexOf('amount_') === 0;
       });
+      const amount = amountMatch ? amountMatch.slice(7) : '';
+      const startEpoch = cell.dataset.startEpoch || '';
+      writeoffLoc.textContent = label;
+      writeoffProd.textContent = productId ? formatProductDisplay(productId) : '';
+      writeoffAmt.textContent = amount || '';
+      writeoffTime.textContent = startEpoch ? computeElapsedLabel(startEpoch) : '';
+      writeoffReason.value = '';
+      overlay.classList.add('visible');
+      writeoffConfirmPopup.classList.add('visible');
+    }
+
+    function closeWriteoffConfirm() {
+      writeoffTargetCell = null;
+      overlay.classList.remove('visible');
+      writeoffConfirmPopup.classList.remove('visible');
+    }
+
+    function renderWriteoffList() {
+      writeoffListBody.innerHTML = '';
+      if (!writeoffRows || writeoffRows.length <= 1) {
+        const empty = document.createElement('div');
+        empty.classList.add('writeoff-list-empty');
+        empty.textContent = 'Geen afschrijvingen gevonden.';
+        writeoffListBody.appendChild(empty);
+        return;
+      }
+
+      for (let i = 1; i < writeoffRows.length; i += 1) {
+        const row = writeoffRows[i] || [];
+        const timestamp = row[0] ? String(row[0]) : '';
+        const loc = row[1] ? String(row[1]) : '';
+        const prod = row[2] ? String(row[2]) : '';
+        const amt = row[3] ? String(row[3]) : '';
+        const reason = row[4] ? String(row[4]) : '';
+
+        const item = document.createElement('div');
+        item.classList.add('writeoff-item');
+
+        const header = document.createElement('div');
+        header.classList.add('writeoff-item-header');
+
+        const title = document.createElement('div');
+        title.classList.add('writeoff-item-title');
+        title.textContent = loc + ' • ' + (prod ? formatProductDisplay(prod) : '') + ' • ' + amt;
+
+        const meta = document.createElement('div');
+        meta.classList.add('writeoff-item-meta');
+        meta.textContent = timestamp;
+
+        header.appendChild(title);
+        header.appendChild(meta);
+
+        const reasonDiv = document.createElement('div');
+        reasonDiv.style.fontSize = '0.85rem';
+        reasonDiv.style.color = '#333333';
+        reasonDiv.textContent = reason;
+
+        item.appendChild(header);
+        item.appendChild(reasonDiv);
+
+        writeoffListBody.appendChild(item);
+      }
     }
 
     async function fetchSheetData() {
@@ -785,397 +1219,161 @@
           method: 'GET'
         });
         if (!response.ok) {
-          return null;
+          throw new Error('fetch sheet failed');
         }
-        const data = await response.json();
-        return data;
-      } catch (e) {
+        const json = await response.json();
+        const rows = parseSheetRows(json);
+        const prod = parseProducts(json);
+        return { rows: rows, products: prod };
+      } catch (err) {
         return null;
       }
     }
 
-    async function sendStatusToSheet() {
+    async function fetchWriteoffs() {
       try {
-        const payload = { values: tableRows };
-        await fetch(SCRIPT_URL, {
+        const response = await fetch(SCRIPT_URL + '?writeoffs=1', {
+          method: 'GET'
+        });
+        if (!response.ok) {
+          throw new Error('fetch writeoffs failed');
+        }
+        const json = await response.json();
+        if (!json || !json.rows || !Array.isArray(json.rows)) {
+          return [];
+        }
+        return json.rows;
+      } catch (err) {
+        return [];
+      }
+    }
+
+    async function syncChanges() {
+      pendingSync = false;
+      setSyncState('pending', 'syncing...');
+      const payload = {
+        action: 'update',
+        rows: tableRows
+      };
+      try {
+        const response = await fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(payload)
         });
-      } catch (e) {
+        if (!response.ok) {
+          throw new Error('sync failed');
+        }
+        await response.json();
+        setSyncState('ok', 'synced');
+        syncError = '';
+      } catch (err) {
+        syncError = String(err && err.message ? err.message : err);
+        setSyncState('error', 'sync error');
       }
     }
 
-    async function sendWriteOff(productId, productTitle, amount) {
+    async function addWriteoffRow(location, productId, amount, reason) {
+      const payload = {
+        action: 'writeoff',
+        location: location,
+        productId: productId,
+        amount: amount,
+        reason: reason
+      };
       try {
-        const payload = {
-          values: tableRows,
-          writeOffs: [{
-            productId: productId,
-            productTitle: productTitle,
-            amount: String(amount)
-          }]
-        };
-        await fetch(SCRIPT_URL, {
+        const response = await fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(payload)
         });
-      } catch (e) {
+        if (!response.ok) {
+          throw new Error('writeoff failed');
+        }
+        await response.json();
+        lastWriteoffLoadMs = 0;
+        await loadWriteoffsIfNeeded(true);
+      } catch (err) {
       }
     }
 
-    function openWriteoffConfirm(cell) {
-      writeoffCell = cell;
-
-      const locEl = cell.querySelector('.location');
-      const locLabel = locEl ? locEl.textContent : '';
-
-      writeoffTitle.textContent = 'Product afschrijven?';
-      writeoffContent.innerHTML = '';
-
-      const msg = document.createElement('div');
-      msg.textContent = 'Product ' + locLabel;
-
-      const buttons = document.createElement('div');
-      buttons.style.display = 'flex';
-      buttons.style.gap = '10px';
-      buttons.style.marginTop = '14px';
-      buttons.style.justifyContent = 'center';
-
-      function makeButton(label) {
-        const b = document.createElement('button');
-        b.textContent = label;
-        b.style.padding = '8px 18px';
-        b.style.borderRadius = '999px';
-        b.style.border = '1px solid #000000';
-        b.style.background = '#ffffff';
-        b.style.cursor = 'pointer';
-        b.style.fontSize = '0.9rem';
-        return b;
-      }
-
-      const btnJa = makeButton('ja');
-      const btnNee = makeButton('nee');
-      const btnAnnuleren = makeButton('annuleren');
-
-      btnJa.addEventListener('click', function () {
-        openWriteoffAmountStep();
-      });
-
-      btnNee.addEventListener('click', function () {
-        clearLocation(cell);
-        closeWriteoffPopup();
-      });
-
-      btnAnnuleren.addEventListener('click', function () {
-        closeWriteoffPopup();
-      });
-
-      buttons.appendChild(btnJa);
-      buttons.appendChild(btnNee);
-      buttons.appendChild(btnAnnuleren);
-
-      writeoffContent.appendChild(msg);
-      writeoffContent.appendChild(buttons);
-
-      overlay.classList.add('active');
-      writeoffPopup.classList.add('active');
-    }
-
-    function openWriteoffAmountStep() {
-      if (!writeoffCell) {
-        closeWriteoffPopup();
-        return;
-      }
-      const rowIndex = parseInt(writeoffCell.dataset.row, 10);
-      const colIndex = parseInt(writeoffCell.dataset.col, 10);
-      const tableIndex = indexFromRowCol(rowIndex, colIndex) + 1;
-      const record = tableRows[tableIndex];
-      if (!record) {
-        closeWriteoffPopup();
-        return;
-      }
-
-      const productId = record[2] ? String(record[2]) : '';
-      const amountStr = record[3] ? String(record[3]) : '';
-      let maxAmount = parseInt(amountStr, 10);
-      if (!maxAmount || maxAmount < 1) {
-        maxAmount = 1;
-      }
-
-      const productDisplay = formatProductDisplay(productId);
-      const productTitle = getProductTitleById(productId);
-
-      writeoffTitle.textContent = 'Product afschrijven';
-      writeoffContent.innerHTML = '';
-
-      const info = document.createElement('div');
-      info.innerHTML = 'Product <strong>' + productDisplay + '</strong>';
-
-      const amountWrap = document.createElement('div');
-      amountWrap.style.marginTop = '10px';
-
-      const amountLabel = document.createElement('div');
-      amountLabel.textContent = 'Aantal af te schrijven (max ' + String(maxAmount) + '):';
-
-      const amountInput = document.createElement('input');
-      amountInput.id = 'writeoff-amount-input';
-      amountInput.type = 'number';
-      amountInput.min = '1';
-      amountInput.max = String(maxAmount);
-      amountInput.step = '1';
-      amountInput.value = String(maxAmount);
-      amountInput.style.marginTop = '6px';
-      amountInput.style.width = '100px';
-      amountInput.style.padding = '6px 8px';
-      amountInput.style.borderRadius = '6px';
-      amountInput.style.border = '1px solid #cccccc';
-      amountInput.style.textAlign = 'center';
-      amountInput.inputMode = 'numeric';
-      amountInput.pattern = '[0-9]*';
-
-      amountWrap.appendChild(amountLabel);
-      amountWrap.appendChild(amountInput);
-
-      const buttons = document.createElement('div');
-      buttons.style.display = 'flex';
-      buttons.style.gap = '10px';
-      buttons.style.marginTop = '14px';
-      buttons.style.justifyContent = 'center';
-
-      function makeButton(label, filled) {
-        const b = document.createElement('button');
-        b.textContent = label;
-        b.style.padding = '8px 18px';
-        b.style.borderRadius = '999px';
-        b.style.cursor = 'pointer';
-        b.style.fontSize = '0.9rem';
-        if (filled) {
-          b.style.background = '#000000';
-          b.style.color = '#ffffff';
-          b.style.border = '1px solid #000000';
-        } else {
-          b.style.background = '#ffffff';
-          b.style.color = '#000000';
-          b.style.border = '1px solid #000000';
-        }
-        return b;
-      }
-
-      const btnAfschrijven = makeButton('afschrijven', true);
-      const btnAnnuleren = makeButton('annuleren', false);
-
-      btnAfschrijven.addEventListener('click', function () {
-        let selected = parseInt(amountInput.value, 10);
-        if (!selected || selected < 1) {
-          selected = 1;
-        }
-        if (selected > maxAmount) {
-          selected = maxAmount;
-        }
-        handleWriteoffConfirm(productId, productTitle, selected);
-      });
-
-      btnAnnuleren.addEventListener('click', function () {
-        closeWriteoffPopup();
-      });
-
-      buttons.appendChild(btnAfschrijven);
-      buttons.appendChild(btnAnnuleren);
-
-      writeoffContent.appendChild(info);
-      writeoffContent.appendChild(amountWrap);
-      writeoffContent.appendChild(buttons);
-    }
-
-    function closeWriteoffPopup() {
-      writeoffPopup.classList.remove('active');
-      writeoffContent.innerHTML = '';
-      writeoffCell = null;
-      const otherOpen = writeoffListPopup.classList.contains('active');
-      if (!otherOpen) {
-        overlay.classList.remove('active');
-      }
-    }
-
-    function clearLocation(cell) {
-      const row = parseInt(cell.dataset.row, 10);
-      const col = parseInt(cell.dataset.col, 10);
-      if (!row || !col) {
-        return;
-      }
-      const tableIndex = indexFromRowCol(row, col) + 1;
-      if (!tableRows[tableIndex]) {
-        return;
-      }
-
-      const currentProductId = tableRows[tableIndex][2] ? String(tableRows[tableIndex][2]) : '';
-
-      tableRows[tableIndex][1] = 'grey';
-      tableRows[tableIndex][3] = '';
-      tableRows[tableIndex][4] = '';
-
-      cell.dataset.startEpoch = '';
-
-      const existing = [];
-      for (let i = 0; i < cell.classList.length; i += 1) {
-        existing.push(cell.classList.item(i));
-      }
-
-      for (let i = 0; i < products.length; i += 1) {
-        cell.classList.remove(products[i].id);
-      }
-
-      for (let i = 0; i < existing.length; i += 1) {
-        const cls = existing[i];
-        if (cls.indexOf('amount_') === 0 || cls.indexOf('start_time_') === 0) {
-          cell.classList.remove(cls);
+    function handleAddStock(cell, stockInput) {
+      const row = Number(cell.dataset.row);
+      const col = Number(cell.dataset.col);
+      const idx = indexFromRowCol(row, col) + 1;
+      const tRow = tableRows[idx] || [];
+      let productId = cell.dataset.productId || '';
+      if (!productId) {
+        if (tRow[2]) {
+          productId = String(tRow[2]);
+          cell.dataset.productId = productId;
+          cell.classList.add(productId);
         }
       }
 
-      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
-        cell.classList.remove(COLOR_CLASSES[i]);
+      const stockVal = stockInput.value ? Number(stockInput.value) : 1;
+      const addQty = stockVal && !isNaN(stockVal) ? Math.max(1, Math.floor(stockVal)) : 1;
+
+      let currentAmount = tRow[3] ? Number(tRow[3]) : 0;
+      if (isNaN(currentAmount)) {
+        currentAmount = 0;
       }
-      cell.classList.add('grey');
+      const newAmount = currentAmount + addQty;
+      tRow[3] = String(newAmount);
 
-      const meta = cell.querySelector('.cell-meta');
-      if (meta) {
-        const productDiv = meta.querySelector('.cell-product');
-        const amountDiv = meta.querySelector('.cell-amount');
-        const timeDiv = meta.querySelector('.cell-time');
-        if (productDiv) {
-          productDiv.textContent = currentProductId ? formatProductDisplay(currentProductId) : '';
-        }
-        if (amountDiv) {
-          amountDiv.textContent = '';
-        }
-        if (timeDiv) {
-          timeDiv.textContent = '';
-        }
-      }
+      const nowEpoch = Date.now();
+      tRow[4] = String(nowEpoch);
 
-      const rowIndex = row - 1;
-      const colIndex = col - 1;
-      if (rowIndex >= 0 && colIndex >= 0 && rowIndex < ROWS && colIndex < COLS) {
-        statusMatrix[rowIndex][colIndex] = 'grey';
-      }
+      tableRows[idx] = tRow;
 
-      scheduleSync();
-    }
-
-    function handleWriteoffConfirm(productId, productTitle, amount) {
-      if (!writeoffCell) {
-        closeWriteoffPopup();
-        return;
-      }
-      clearLocation(writeoffCell);
-      sendWriteOff(productId, productTitle, amount);
-      closeWriteoffPopup();
-      updateElapsedTimes();
-    }
-
-    function updateCellForSelection(cell, tableIndex, productId, amount, startEpochStr) {
-      if (!tableRows[tableIndex]) {
-        return;
-      }
-
-      tableRows[tableIndex][2] = productId;
-      tableRows[tableIndex][3] = String(amount);
-      tableRows[tableIndex][4] = startEpochStr;
-
-      const existing = [];
-      for (let i = 0; i < cell.classList.length; i += 1) {
-        existing.push(cell.classList.item(i));
-      }
-
-      for (let i = 0; i < products.length; i += 1) {
-        cell.classList.remove(products[i].id);
-      }
-
-      for (let i = 0; i < existing.length; i += 1) {
-        const cls = existing[i];
-        if (cls.indexOf('amount_') === 0 || cls.indexOf('start_time_') === 0) {
-          cell.classList.remove(cls);
-        }
-      }
-
-      for (let i = 0; i < COLOR_CLASSES.length; i += 1) {
-        cell.classList.remove(COLOR_CLASSES[i]);
+      for (let j = 0; j < COLOR_CLASSES.length; j += 1) {
+        cell.classList.remove(COLOR_CLASSES[j]);
       }
       cell.classList.add('green');
+      matrix[row - 1][col - 1] = 'green';
+      tRow[1] = 'green';
 
-      if (productId) {
-        cell.classList.add(productId);
+      const amountCls = Array.from(cell.classList).find(function (cls) {
+        return cls.indexOf('amount_') === 0;
+      });
+      if (amountCls) {
+        cell.classList.remove(amountCls);
       }
-      cell.classList.add('amount_' + String(amount));
-      cell.classList.add('start_time_' + startEpochStr);
-      cell.dataset.startEpoch = startEpochStr;
+      cell.classList.add('amount_' + String(newAmount));
+
+      const startCls = Array.from(cell.classList).find(function (cls) {
+        return cls.indexOf('start_time_') === 0;
+      });
+      if (startCls) {
+        cell.classList.remove(startCls);
+      }
+      cell.classList.add('start_time_' + String(nowEpoch));
+      cell.dataset.startEpoch = String(nowEpoch);
 
       const meta = cell.querySelector('.cell-meta');
       if (meta) {
-        const productDiv = meta.querySelector('.cell-product');
         const amountDiv = meta.querySelector('.cell-amount');
-        const timeDiv = meta.querySelector('.cell-time');
-        const productDisplay = productId ? formatProductDisplay(productId) : '';
-        if (productDiv) {
-          productDiv.textContent = productDisplay;
-        }
         if (amountDiv) {
-          amountDiv.textContent = amount ? 'aantal: ' + String(amount) : '';
+          amountDiv.textContent = 'aantal: ' + String(newAmount);
         }
+        const timeDiv = meta.querySelector('.cell-time');
         if (timeDiv) {
-          timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
-        }
-
-        const header = cell.querySelector('.location');
-        if (header) {
-          header.textContent = productDisplay;
+          timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(String(nowEpoch));
         }
       }
-    }
 
-    function handleAddStock(cell, inputElement) {
-      const row = parseInt(cell.dataset.row, 10);
-      const col = parseInt(cell.dataset.col, 10);
-      if (!row || !col) {
-        return;
-      }
-      const tableIndex = indexFromRowCol(row, col) + 1;
-      const record = tableRows[tableIndex];
-      if (!record) {
-        return;
-      }
-      const productId = record[2] ? String(record[2]) : '';
-      if (!productId) {
-        return;
-      }
-
-      const raw = inputElement ? inputElement.value : '';
-      let amount = parseInt(raw, 10);
-      if (!amount || amount < 1) {
-        amount = 1;
-      }
-
-      const now = Date.now();
-      const startEpochStr = String(now);
-
-      updateCellForSelection(cell, tableIndex, productId, amount, startEpochStr);
       scheduleSync();
-      updateElapsedTimes();
     }
 
     function updateElapsedTimes() {
       const cells = grid.querySelectorAll('.cell');
       for (let i = 0; i < cells.length; i += 1) {
         const cell = cells[i];
-        const startEpochStr = cell.dataset.startEpoch;
+        const startEpochStr = cell.dataset.startEpoch || '';
         if (!startEpochStr) {
           continue;
         }
@@ -1187,192 +1385,143 @@
         if (!timeDiv) {
           continue;
         }
-
-        const minutes = computeElapsedMinutes(startEpochStr);
-        timeDiv.textContent = 'tijd op locatie: ' + String(minutes) + ' min';
-
-        let newColor = 'green';
-        if (minutes > 105 && minutes < 120) {
-          newColor = 'orange';
-        } else if (minutes >= 120) {
-          newColor = 'red';
-        }
-
-        const currentColor = getCellColorClass(cell);
-        if (currentColor !== newColor) {
-          for (let j = 0; j < COLOR_CLASSES.length; j += 1) {
-            cell.classList.remove(COLOR_CLASSES[j]);
-          }
-          cell.classList.add(newColor);
-        }
+        timeDiv.textContent = 'tijd op locatie: ' + computeElapsedLabel(startEpochStr);
       }
     }
 
-    function getTodayDateString() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1;
-      const day = now.getDate();
-      const mm = month < 10 ? '0' + month : String(month);
-      const dd = day < 10 ? '0' + day : String(day);
-      return year + '-' + mm + '-' + dd;
-    }
-
-    function sheetDateToInputFormat(sheetDateStr) {
-      if (!sheetDateStr) {
-        return '';
-      }
-      const s = String(sheetDateStr).trim();
-      const parts = s.split('-');
-      if (parts.length !== 3) {
-        return '';
-      }
-      const d = parts[0];
-      const m = parts[1];
-      const y = parts[2];
-      const dd = d.length === 1 ? '0' + d : d;
-      const mm = m.length === 1 ? '0' + m : m;
-      return y + '-' + mm + '-' + dd;
-    }
-
-    function renderWriteoffListForDate(inputDateStr) {
-      if (!writeoffListTableWrapper) {
+    async function loadWriteoffsIfNeeded(force) {
+      const now = Date.now();
+      if (!force && lastWriteoffLoadMs && now - lastWriteoffLoadMs < 25000) {
         return;
       }
-      writeoffListTableWrapper.innerHTML = '';
-      const targetDate = inputDateStr;
-      const list = [];
-      for (let i = 0; i < writeOffs.length; i += 1) {
-        const w = writeOffs[i];
-        const converted = sheetDateToInputFormat(w.date);
-        if (converted === targetDate) {
-          list.push(w);
-        }
-      }
-
-      if (list.length === 0) {
-        const empty = document.createElement('div');
-        empty.classList.add('writeoff-empty');
-        empty.textContent = 'Geen afschrijvingen voor deze datum.';
-        writeoffListTableWrapper.appendChild(empty);
-        return;
-      }
-
-      const table = document.createElement('table');
-      table.classList.add('writeoff-table');
-
-      const thead = document.createElement('thead');
-      const headRow = document.createElement('tr');
-      const headers = ['Tijd', 'Product ID', 'Product', 'Aantal'];
-      for (let i = 0; i < headers.length; i += 1) {
-        const th = document.createElement('th');
-        th.textContent = headers[i];
-        headRow.appendChild(th);
-      }
-      thead.appendChild(headRow);
-
-      const tbody = document.createElement('tbody');
-      for (let i = 0; i < list.length; i += 1) {
-        const w = list[i];
-        const tr = document.createElement('tr');
-
-        const tdTime = document.createElement('td');
-        tdTime.textContent = w.time;
-
-        const tdId = document.createElement('td');
-        tdId.textContent = w.productId;
-
-        const tdTitle = document.createElement('td');
-        tdTitle.textContent = w.productTitle;
-
-        const tdAmount = document.createElement('td');
-        tdAmount.textContent = w.amount;
-
-        tr.appendChild(tdTime);
-        tr.appendChild(tdId);
-        tr.appendChild(tdTitle);
-        tr.appendChild(tdAmount);
-
-        tbody.appendChild(tr);
-      }
-
-      table.appendChild(thead);
-      table.appendChild(tbody);
-      writeoffListTableWrapper.appendChild(table);
-    }
-
-    async function refreshWriteOffsFromSheet() {
-      const sheetData = await fetchSheetData();
-      if (!sheetData || !sheetData.writeOffs) {
-        writeOffs = [];
-        return;
-      }
-      const writeOffValues = sheetData.writeOffs;
-      writeOffs = buildWriteOffsFromValues(writeOffValues);
-    }
-
-    function closeWriteoffListPopup() {
-      writeoffListPopup.classList.remove('active');
-      const otherOpen = writeoffPopup.classList.contains('active');
-      if (!otherOpen) {
-        overlay.classList.remove('active');
+      const rows = await fetchWriteoffs();
+      if (rows && rows.length) {
+        writeoffRows = rows;
+        lastWriteoffLoadMs = now;
+        renderWriteoffList();
       }
     }
 
     async function init() {
-      writeoffClose.addEventListener('click', function () {
-        closeWriteoffPopup();
-      });
-      writeoffListClose.addEventListener('click', function () {
-        closeWriteoffListPopup();
-      });
+      setSyncState('pending', 'loading...');
+      const result = await fetchSheetData();
+      if (!result) {
+        setSyncState('error', 'load error');
+        return;
+      }
+      tableRows = result.rows;
+      products = result.products;
+      updateMatrixFromRows(tableRows);
+      buildGridFromMatrix(matrix);
+      setSyncState('ok', 'synced');
 
-      writeoffListButton.addEventListener('click', function () {
-        const todayStr = getTodayDateString();
-        writeoffDateInput.value = todayStr;
-
-        writeoffListTableWrapper.innerHTML = '';
-        const loading = document.createElement('div');
-        loading.classList.add('writeoff-empty');
-        loading.textContent = 'Laden...';
-        writeoffListTableWrapper.appendChild(loading);
-
-        overlay.classList.add('active');
-        writeoffListPopup.classList.add('active');
-
-        refreshWriteOffsFromSheet().then(function () {
-          renderWriteoffListForDate(writeoffDateInput.value);
-        });
+      const observer = new MutationObserver(function () {
+        applyMatrixColorsFromCells();
       });
 
-      writeoffDateInput.addEventListener('change', function () {
-        renderWriteoffListForDate(writeoffDateInput.value);
+      observer.observe(grid, {
+        attributes: true,
+        attributeFilter: ['class'],
+        subtree: true
       });
-
-      overlay.addEventListener('click', function () {
-        closeWriteoffPopup();
-        closeWriteoffListPopup();
-      });
-
-      const sheetData = await fetchSheetData();
-      const sheetValues = sheetData && sheetData.values ? sheetData.values : null;
-      const productValues = sheetData && sheetData.products ? sheetData.products : null;
-      const writeOffValues = sheetData && sheetData.writeOffs ? sheetData.writeOffs : null;
-
-      tableRows = buildTableFromValues(sheetValues);
-      products = buildProductsFromValues(productValues);
-      writeOffs = buildWriteOffsFromValues(writeOffValues);
-      statusMatrix = tableToStatusMatrix(tableRows);
-      buildGridFromMatrix(statusMatrix);
-      startObserver();
-      sendStatusToSheet();
-      updateElapsedTimes();
-      elapsedTimerId = setInterval(updateElapsedTimes, 60000);
 
       window.addEventListener('resize', function () {
-        buildGridFromMatrix(statusMatrix);
+        buildGridFromMatrix(matrix);
       });
+
+      setInterval(updateElapsedTimes, 60000);
+      updateElapsedTimes();
     }
+
+    writeoffButton.addEventListener('click', function () {
+      openWriteoffList();
+    });
+
+    writeoffOverlay.addEventListener('click', function () {
+      closeWriteoffList();
+    });
+
+    writeoffListClose.addEventListener('click', function () {
+      closeWriteoffList();
+    });
+
+    writeoffListRefresh.addEventListener('click', function () {
+      lastWriteoffLoadMs = 0;
+      loadWriteoffsIfNeeded(true);
+    });
+
+    overlay.addEventListener('click', function () {
+      closeWriteoffConfirm();
+    });
+
+    writeoffConfirmClose.addEventListener('click', function () {
+      closeWriteoffConfirm();
+    });
+
+    writeoffCancel.addEventListener('click', function () {
+      closeWriteoffConfirm();
+    });
+
+    writeoffConfirm.addEventListener('click', async function () {
+      if (!writeoffTargetCell) {
+        closeWriteoffConfirm();
+        return;
+      }
+      const row = Number(writeoffTargetCell.dataset.row);
+      const col = Number(writeoffTargetCell.dataset.col);
+      const loc = locationLabel(row, col);
+      const productId = writeoffTargetCell.dataset.productId || '';
+      const amountMatch = Array.from(writeoffTargetCell.classList).find(function (cls) {
+        return cls.indexOf('amount_') === 0;
+      });
+      const amount = amountMatch ? amountMatch.slice(7) : '';
+
+      const reason = writeoffReason.value ? String(writeoffReason.value) : '';
+
+      const idx = indexFromRowCol(row, col) + 1;
+      const tRow = tableRows[idx] || [];
+      tRow[3] = '';
+      tRow[4] = '';
+      tRow[1] = 'grey';
+      tableRows[idx] = tRow;
+
+      for (let j = 0; j < COLOR_CLASSES.length; j += 1) {
+        writeoffTargetCell.classList.remove(COLOR_CLASSES[j]);
+      }
+      writeoffTargetCell.classList.add('grey');
+      matrix[row - 1][col - 1] = 'grey';
+
+      const amountCls = Array.from(writeoffTargetCell.classList).find(function (cls) {
+        return cls.indexOf('amount_') === 0;
+      });
+      if (amountCls) {
+        writeoffTargetCell.classList.remove(amountCls);
+      }
+
+      const startCls = Array.from(writeoffTargetCell.classList).find(function (cls) {
+        return cls.indexOf('start_time_') === 0;
+      });
+      if (startCls) {
+        writeoffTargetCell.classList.remove(startCls);
+      }
+      writeoffTargetCell.dataset.startEpoch = '';
+
+      const meta = writeoffTargetCell.querySelector('.cell-meta');
+      if (meta) {
+        const amountDiv = meta.querySelector('.cell-amount');
+        if (amountDiv) {
+          amountDiv.textContent = '';
+        }
+        const timeDiv = meta.querySelector('.cell-time');
+        if (timeDiv) {
+          timeDiv.textContent = '';
+        }
+      }
+
+      closeWriteoffConfirm();
+      scheduleSync();
+      await addWriteoffRow(loc, productId, amount, reason);
+    });
 
     init();
   </script>
