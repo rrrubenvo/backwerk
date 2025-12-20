@@ -627,8 +627,12 @@
           const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
 
           if (productId) {
-            cell.classList.add(productId);
-          }
+  cell.dataset.productId = productId;
+  cell.classList.add(productId);
+} else {
+  cell.dataset.productId = '';
+}
+
           if (amount) {
             cell.classList.add('amount_' + amount);
           }
