@@ -61,33 +61,27 @@
     }
 
     .grid {
-      display: grid;
+      display: flex;
+      flex-wrap: wrap;
       gap: 15px;
       width: 100%;
+      height: 500%;
       box-sizing: border-box;
-      align-content: start;
-    
-      grid-auto-flow: row;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      align-content: flex-start;
     }
 
-  .cell {
-    box-sizing: border-box;
-    border-radius: 10px;
-    position: relative;
-    background: #e0e0e0;
-    transition: background 150ms ease-out, box-shadow 150ms ease-out, transform 150ms ease-out;
-    cursor: default;
-    overflow: hidden;
-  
-    min-height: 120px;
-  }
-
-    .cell[data-product-id$="1"] {
-  grid-column-start: 1;
-}
-
-
+    .cell {
+      box-sizing: border-box;
+      flex: 0 0 calc((100% - 5 * 15px) / 6);
+      height: calc((100% - 4 * 15px) / 5);
+      border-radius: 10px;
+      position: relative;
+      background: #e0e0e0;
+      transition: background 150ms ease-out, box-shadow 150ms ease-out, transform 150ms ease-out;
+      cursor: default;
+      overflow: hidden;
+      max-height: 120px;
+    }
 
     .cell:hover {
       transform: translateY(-2px);
@@ -599,7 +593,6 @@
       const displayCols = getDisplayCols();
       const displayRows = getDisplayRows(displayCols);
 
-
       grid.innerHTML = '';
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
@@ -608,6 +601,8 @@
           cell.dataset.row = String(r);
           cell.dataset.col = String(c);
 
+          cell.style.flex = '0 0 calc((100% - ' + (displayCols - 1) + ' * 15px) / ' + displayCols + ')';
+          cell.style.height = 'calc((100% - ' + (displayRows - 1) + ' * 15px) / ' + displayRows + ')';
 
           const color = matrix[r - 1][c - 1];
           if (COLOR_CLASSES.indexOf(color) === -1) {
@@ -632,12 +627,8 @@
           const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
 
           if (productId) {
-            cell.dataset.productId = productId;
             cell.classList.add(productId);
-          } else {
-            cell.dataset.productId = '';
           }
-
           if (amount) {
             cell.classList.add('amount_' + amount);
           }
@@ -1022,8 +1013,6 @@
       }
 
       const currentProductId = tableRows[tableIndex][2] ? String(tableRows[tableIndex][2]) : '';
-      cell.dataset.productId = currentProductId ? String(currentProductId) : '';
-
 
       tableRows[tableIndex][1] = 'grey';
       tableRows[tableIndex][3] = '';
@@ -1094,8 +1083,6 @@
       }
 
       tableRows[tableIndex][2] = productId;
-      cell.dataset.productId = productId ? String(productId) : '';
-
       tableRows[tableIndex][3] = String(amount);
       tableRows[tableIndex][4] = startEpochStr;
 
