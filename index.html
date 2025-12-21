@@ -207,11 +207,11 @@
     .cell-add-button:hover {
       background: #f0f0f0;
     }
-    
+
     .cell.grey .cell-clear {
       display: none;
     }
-    
+
     .overlay {
       position: fixed;
       inset: 0;
@@ -341,6 +341,22 @@
       text-align: center;
       margin-top: 6px;
     }
+
+    .grid-container {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .category-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 2px 2px 0;
+    }
+
+    .category-grid {
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -364,7 +380,7 @@
   </header>
 
   <main class="main">
-    <div id="grid" class="grid"></div>
+    <div id="grid" class="grid-container"></div>
   </main>
 
   <div id="overlay" class="overlay"></div>
@@ -589,11 +605,18 @@
       return rows < 1 ? 1 : rows;
     }
 
+    function getProductCategory(productId) {
+      const s = String(productId || '').trim();
+      const m = s.match(/^([1-9])\d{2}$/);
+      return m ? m[1] : 'onbekend';
+    }
+
     function buildGridFromMatrix(matrix) {
       const displayCols = getDisplayCols();
-      const displayRows = getDisplayRows(displayCols);
 
+      const groupedCells = {};
       grid.innerHTML = '';
+
       for (let r = 1; r <= ROWS; r += 1) {
         for (let c = 1; c <= COLS; c += 1) {
           const cell = document.createElement('div');
@@ -602,7 +625,7 @@
           cell.dataset.col = String(c);
 
           cell.style.flex = '0 0 calc((100% - ' + (displayCols - 1) + ' * 15px) / ' + displayCols + ')';
-          cell.style.height = 'calc((100% - ' + (displayRows - 1) + ' * 15px) / ' + displayRows + ')';
+          cell.style.height = '120px';
 
           const color = matrix[r - 1][c - 1];
           if (COLOR_CLASSES.indexOf(color) === -1) {
@@ -627,11 +650,11 @@
           const startEpoch = startEpochStr && !isNaN(Number(startEpochStr)) ? Number(startEpochStr) : null;
 
           if (productId) {
-  cell.dataset.productId = productId;
-  cell.classList.add(productId);
-} else {
-  cell.dataset.productId = '';
-}
+            cell.dataset.productId = productId;
+            cell.classList.add(productId);
+          } else {
+            cell.dataset.productId = '';
+          }
 
           if (amount) {
             cell.classList.add('amount_' + amount);
@@ -712,8 +735,52 @@
           cell.appendChild(location);
           cell.appendChild(meta);
 
-          grid.appendChild(cell);
+          const category = getProductCategory(productId);
+          if (!groupedCells[category]) {
+            groupedCells[category] = [];
+          }
+          groupedCells[category].push(cell);
         }
+      }
+
+      const keys = Object.keys(groupedCells);
+      const numericKeys = [];
+      const otherKeys = [];
+
+      for (let i = 0; i < keys.length; i += 1) {
+        const k = keys[i];
+        if (/^\d$/.test(k)) {
+          numericKeys.push(k);
+        } else {
+          otherKeys.push(k);
+        }
+      }
+
+      numericKeys.sort(function (a, b) {
+        return Number(a) - Number(b);
+      });
+      otherKeys.sort();
+
+      const orderedKeys = numericKeys.concat(otherKeys);
+
+      for (let i = 0; i < orderedKeys.length; i += 1) {
+        const category = orderedKeys[i];
+
+        const title = document.createElement('div');
+        title.classList.add('category-title');
+        title.textContent = 'Categorie ' + category;
+
+        const subGrid = document.createElement('div');
+        subGrid.classList.add('grid', 'category-grid');
+        subGrid.dataset.category = category;
+
+        const cells = groupedCells[category] || [];
+        for (let j = 0; j < cells.length; j += 1) {
+          subGrid.appendChild(cells[j]);
+        }
+
+        grid.appendChild(title);
+        grid.appendChild(subGrid);
       }
     }
 
