@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Back-werk stock system 2</title>
+  <title>Back-werk stock system 3</title>
   <style>
    html, body {
   height: 100%;
@@ -12,8 +12,7 @@
 body {
   display: flex;
   flex-direction: column;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-               sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: #f5f5f5;
 }
 
@@ -72,8 +71,8 @@ body {
 
 .cell {
   box-sizing: border-box;
-  flex: 0 0 calc((100% - 5 * 15px) / 6);
-  height: 100px !important;
+  flex: 0 0 calc((100% - 5 * 8px) / 6);
+  height: calc((100% - 4 * 8px) / 5);
   border-radius: 10px;
   position: relative;
   background: #e0e0e0;
@@ -106,7 +105,7 @@ body {
   background: #ffcdd2;
 }
 
-.cell .location{
+.cell .location {
   display: none;
 }
 
@@ -129,54 +128,53 @@ body {
   left: 8px;
   right: 8px;
   bottom: 8px;
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  grid-template-areas:
-    "product product product"
-    "amount time clear"
-    "controls controls controls";
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  row-gap: 2px;
-  column-gap: 6px;
+  gap: 6px;
   font-size: 0.75rem;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
-  padding: 3px 5px;
+  padding: 4px 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
-.cell-product,
-.cell-amount {
+.cell-product {
+  flex: 1 1 100%;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #111111;
-  min-width: 0;
-}
-
-.cell-product {
   font-weight: 600;
-  grid-area: product;
 }
 
 .cell-amount {
-  grid-area: amount;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #111111;
 }
 
 .cell-time-row {
-  display: contents;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
 .cell-time {
+  min-width: 0;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #111111;
-  min-width: 0;
-  grid-area: time;
-  justify-self: start;
 }
 
 .cell-clear {
@@ -185,8 +183,7 @@ body {
   user-select: none;
   padding: 3px 6px;
   border-radius: 4px;
-  grid-area: clear;
-  justify-self: end;
+  flex: 0 0 auto;
 }
 
 .cell-clear:hover {
@@ -197,15 +194,15 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 0;
-  grid-area: controls;
+  margin-top: 4px;
+  flex: 1 1 100%;
   min-width: 0;
 }
 
 .cell-stock-input {
   flex: 1;
   box-sizing: border-box;
-  padding: 3px 5px;
+  padding: 4px 6px;
   border-radius: 6px;
   border: 1px solid #cccccc;
   font-size: 0.75rem;
@@ -215,7 +212,7 @@ body {
 }
 
 .cell-add-button {
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
   border: 1px solid #000000;
   background: #ffffff;
@@ -380,6 +377,7 @@ body {
 .category-grid {
   height: auto;
 }
+
 
   </style>
 </head>
